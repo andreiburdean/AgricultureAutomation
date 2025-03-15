@@ -1,0 +1,77 @@
+ESP pe post de centru de colectare a datelor citite de senzori, iar rpi5 pe post de server web/application si centru de control pentru actuatori.
+ESP citeste valorile de la senzori si fie creaza o conectiune ws catre rpi5 prin care trimite valorile la momentul citirii/la momente/intervale de timp fixe, fie le trimite prin requesturi post, iar apoi rpi5 primeste valorile si comanda actuatorii in mod corespunzator/pe baza unui program/setari anume.
+Utilizatorul poate sa vizualizeze starea automatizarii/sa modifice sau sa reconfigureze valorile de care depinde functionarea printr-o aplicatie.
+Pentru date legate de utilizator/login si valori salvate/configuratii ale sistemului sa folosesc alt calculator/server care sa functioneze direct pe post de server db sau pe post de application server + db, care sa comunice cu rpi5 datele care pot sa aibe latenta mai mare la transmitere.
+
+Senzori
+	- umiditate + temperatura
+	- luminozitate
+
+	eventual
+		- umiditate a solului
+		- temperatura a solului
+		- presiune atmosferica
+		- concentratia de azot a solului
+
+Actuatori
+	- ventilator/motor dc
+	- leduri
+	- pompa pentru apa
+	- display lcd
+	- servomotor
+	eventual 
+		- supapa solenoida
+
+Clase entitati
+	User
+		- user_id PK
+		- email
+		- parola (a contului)
+
+	Environment (rpi5 sau sera/cultura automatizata)
+		- env_id PK
+		- RPI5_ip
+		- user_id FK catre User
+		- cod_acces
+
+	Program_Type (set de reguli generale pentru automatizare in functie de cultura)
+		- program_type_id PK
+		- program_type
+
+	Program
+		- program_id PK
+		- user_id FK catre User
+		- env_id FK cagre Environment
+		- program_type_id FK catre Program_Type
+		- nume _program
+		- status
+
+	Fixed_Environment_Conditions
+		- cond_id PK
+		- program_type_id FK catre Program_Type
+		- conditiile efective care controleaza sistemul pentru fiecare program in parte
+
+	Custom_Environment_Conditions
+		- cond_id PK
+		- user_id FK catre User
+		- env_id FK cagre Environment
+		- program_type_id FK catre Program_Type
+		- conditiile efective care controleaza sistemul pe baza unor reguli create de utilizator
+		
+Aplicatie
+	- se autentifica la server
+	- da comenzi serverului care mai departe da comenzi automatizarii
+		
+Server
+	- contine baza de date
+	- primeste comenzi de la utilizator prin intermediul aplicatiei
+	- trimite programul de lucru pe care il indeplineste RPI5
+
+RPI5
+	- primeste comenzi de la server
+	- primeste valori de la senzori citite de ESP32 
+	- controleaza actuatori pe baza valorilor si a programului actual
+	- singura origine pe care o accepta pentru requesturi e cea a serverului 
+
+ESP32
+	- citeste valorile de la senzori si le trimite catre RPI5
