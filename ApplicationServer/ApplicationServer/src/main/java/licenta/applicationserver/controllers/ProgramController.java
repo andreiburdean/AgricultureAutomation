@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000"})
-@RequestMapping("/api/users")
+@RequestMapping("/api/program")
 public class ProgramController {
 
     private final ProgramService programService;
@@ -63,7 +63,7 @@ public class ProgramController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/test-receive")
+    @PostMapping("/receive-sensor-data")
     public ResponseEntity<Integer> testRaspberryComRec(@RequestBody Object value){
         System.out.println(value);
         return new ResponseEntity<>(HttpStatus.OK);

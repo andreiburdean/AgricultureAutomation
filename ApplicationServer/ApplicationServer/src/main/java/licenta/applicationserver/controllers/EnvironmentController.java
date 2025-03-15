@@ -15,7 +15,7 @@ import licenta.applicationserver.services.EnvironmentService;
 @Controller
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000"})
-@RequestMapping("/api/users")
+@RequestMapping("/api/environment")
 public class EnvironmentController {
 
     private final EnvironmentService environmentService;

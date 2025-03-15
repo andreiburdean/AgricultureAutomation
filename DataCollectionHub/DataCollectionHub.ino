@@ -1,5 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <ArduinoWebsockets.h>
+#include <ESP8266HTTPClient.h>
+#include <ArduinoJson.h>
 #include <Adafruit_MPL3115A2.h>
 #include "DHT.h"
 
@@ -29,7 +31,8 @@ const char* password = "xaM3ApJwYu";
 // const char* serverHost = "192.168.100.137";
 const char* serverHost = "192.168.1.130";
 const int   serverPort = 5000;
-const char* serverPath = "/ws"; 
+const char* serverPathWS = "/ws";
+const char* serverURL = "http://192.168.1.130:5000/receive-sensor-data";
 
 void setup() {
   Serial.begin(9600);
@@ -57,7 +60,7 @@ void setup() {
   Serial.println("\nWiFi connected");
 
   //endpoint setup
-  if (client.connect(serverHost, serverPort, serverPath)) {
+  if (client.connect(serverHost, serverPort, serverPathWS)) {
     Serial.println("Connected to WebSocket server");
   } else {
     Serial.println("Failed to connect to WebSocket server");
@@ -65,37 +68,57 @@ void setup() {
 }
 
 void loop() {
-  client.poll();
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    WiFiClient client;
+
+    //sensor data reading
+    float humidity = dht.readHumidity();
+    float temperature = dht.readTemperature();
   
-  float humidity = dht.readHumidity();
-  float temperature = dht.readTemperature();
-  
-  if (isnan(humidity) || isnan(temperature)) {
-    Serial.println("Failed to read from DHT sensor!");
+    if (isnan(humidity) || isnan(temperature)) {
+      Serial.println("Failed to read from DHT sensor!");
+    }
+
+    float pressure = baro.getPressure();
+
+    int luminosityVoltageValue = analogRead(TEMP6000_PIN);
+    float luminosity = luminosityVoltageValue * (5 / 1023.0);
+
+    int soilMoisture = digitalRead(HW080_PIN);
+
+    // JSON data
+    StaticJsonDocument<200> doc;
+    doc["temperature"] = temperature;
+    doc["humidity"] = humidity;
+    doc["pressure"] = pressure;
+    doc["luminosity"] = luminosity;
+    doc["soilMoisture"] = soilMoisture;
+        
+    String jsonData;
+    serializeJson(doc, jsonData);
+
+    Serial.print("Sending sensor data: ");
+    Serial.println(jsonData);
+
+    //POST request
+    http.begin(client, serverURL);
+    http.addHeader("Content-Type", "application/json");
+    int httpResponseCode = http.POST(jsonData);
+
+    if (httpResponseCode > 0) {
+        // Serial.print("Server Response: ");
+        // Serial.println(httpResponseCode);
+        // String response = http.getString();
+        // Serial.println(response);
+    } else {
+        Serial.print("Error sending request: ");
+        Serial.println(httpResponseCode);
+    }
+    http.end();
+  } else {
+    Serial.println("WiFi disconnected, cannot send data.");
   }
-
-  float pressure = baro.getPressure();
-
-  int luminosityVoltageValue = analogRead(TEMP6000_PIN);
-  float luminosity = luminosityVoltageValue * (5 / 1023.0);
-
-  int soilMoisture = digitalRead(HW080_PIN);
-  
-  String payload = "{\"temperature\":";
-  payload += temperature;
-  payload += ", \"humidity\":";
-  payload += humidity;
-  payload += ", \"luminosity\":";
-  payload += luminosity;
-  payload += ", \"soilMoisture\":";
-  payload += soilMoisture;
-  payload += ", \"pressure\":";
-  payload += pressure;
-  payload += "}";
-  
-  client.send(payload);
-  Serial.print("Sent: ");
-  Serial.println(payload);
 
   delay(1000);  
 }
