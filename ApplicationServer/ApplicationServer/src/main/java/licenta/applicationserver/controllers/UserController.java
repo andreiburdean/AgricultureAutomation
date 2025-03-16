@@ -1,6 +1,7 @@
 package licenta.applicationserver.controllers;
 
 import licenta.applicationserver.dtos.LoginRequest;
+import licenta.applicationserver.dtos.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,9 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import licenta.applicationserver.entities.User;
 import licenta.applicationserver.services.UserService;
 
+import java.util.Map;
+import java.util.Objects;
+
 @Controller
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000"})
 @RequestMapping("/api/users")
 public class UserController {
 
@@ -24,12 +27,20 @@ public class UserController {
 
     @PostMapping("/create-user")
     public ResponseEntity<User> addUser(@RequestBody User user) {
-        User newUser = userService.createUserAccount(user);
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+        User existingUser = userService.findByEmail(user.getEmail());
+
+        if (existingUser != null) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } else {
+            userService.createUserAccount(user);
+            System.out.println("New user created: " + user.getUserId() + ", " + user.getEmail() + ", " + user.getPassword());
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
-        return userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest) {
+        System.out.println("User logged in: " + loginRequest.getEmail() + " " + loginRequest.getPassword());
+        return userService.loginUser(loginRequest);
     }
 }

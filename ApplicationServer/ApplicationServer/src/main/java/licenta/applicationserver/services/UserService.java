@@ -1,5 +1,7 @@
 package licenta.applicationserver.services;
 
+import licenta.applicationserver.dtos.LoginRequest;
+import licenta.applicationserver.dtos.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,19 +33,24 @@ public class UserService {
         return optionalUser.orElse(null);
     }
 
-    public ResponseEntity<String> loginUser(String email, String password) {
+    public User findByEmail(String email){
         Optional<User> optionalUser = userRepository.findByEmail(email);
+        return optionalUser.orElse(null);
+    }
+
+    public ResponseEntity<LoginResponse> loginUser(LoginRequest loginRequest) {
+        Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            String hashedPassword = PasswordHasher.hashPassword(password);
+            String hashedPassword = PasswordHasher.hashPassword(loginRequest.getPassword());
             if (user.getPassword().equals(hashedPassword)) {
-                return ResponseEntity.ok("Authorized: " + user.getUserId());
+                return ResponseEntity.ok(new LoginResponse(user.getUserId(), null));
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect password");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(null, "Incorrect password"));
             }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LoginResponse(null, "User not found"));
         }
     }
 }

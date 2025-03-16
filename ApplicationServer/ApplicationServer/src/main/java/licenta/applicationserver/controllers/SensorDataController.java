@@ -13,7 +13,6 @@ import java.util.Map;
 
 @Controller
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000"})
 @RequestMapping("/api/sensor-data")
 public class SensorDataController {
 
