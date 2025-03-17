@@ -1,11 +1,9 @@
 package licenta.applicationserver.controllers;
 
-import licenta.applicationserver.dtos.EnvironmentDTO;
 import licenta.applicationserver.dtos.ProgramDTO;
 import licenta.applicationserver.entities.Environment;
 import licenta.applicationserver.entities.Program;
 import licenta.applicationserver.entities.ProgramType;
-import licenta.applicationserver.entities.User;
 import licenta.applicationserver.services.EnvironmentService;
 import licenta.applicationserver.services.ProgramService;
 import licenta.applicationserver.services.ProgramTypeService;

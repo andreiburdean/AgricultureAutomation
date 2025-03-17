@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import licenta.applicationserver.entities.Environment;
 import licenta.applicationserver.repositories.EnvironmentRepository;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,8 +24,6 @@ public class EnvironmentService {
     }
 
     public Environment addEnvironment(Environment environment) {
-        String hashedAccessCode = PasswordHasher.hashPassword(environment.getAccessCode());
-        environment.setAccessCode(hashedAccessCode);
         return environmentRepository.save(environment);
     }
 
@@ -32,19 +32,17 @@ public class EnvironmentService {
         return optionalEnvironment.orElse(null);
     }
 
-    public ResponseEntity<String> accessEnvironment(Integer raspberryId, String accessCode){
-        Optional<Environment> optionalEnvironment = environmentRepository.findByRaspberryId(raspberryId);
+    public ResponseEntity<List<Environment>> findEnvironmentsByUserId(Integer userId){
+        Optional<List<Environment>> environments = environmentRepository.findEnvironmentsByUserId(userId);
 
-        if (optionalEnvironment.isPresent()) {
-            Environment environment = optionalEnvironment.get();
-            String hashedAccessCode = PasswordHasher.hashPassword(accessCode);
-            if (environment.getAccessCode().equals(hashedAccessCode)) {
-                return ResponseEntity.ok("Authorized");
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect password");
-            }
+        if (environments.isPresent() && !environments.get().isEmpty()) {
+            return ResponseEntity.ok(environments.get());
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Environment not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
         }
+    }
+
+    public void deleteEnvironment(Integer environmentId) {
+        environmentRepository.deleteById(environmentId);
     }
 }

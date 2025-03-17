@@ -6,9 +6,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EnvironmentDTO {
+    private Integer environmentId;
     private Integer raspberryId;
     private String raspberryIp;
-    private Integer userId;
-    private String accessCode;
+    private String environmentName;
+
+    public EnvironmentDTO(Integer environmentId, Integer raspberryId, String raspberryIp, String environmentName) {
+        this.environmentId = environmentId;
+        this.raspberryId = raspberryId;
+        this.raspberryIp = raspberryIp;
+        this.environmentName = environmentName;
+    }
 }
 

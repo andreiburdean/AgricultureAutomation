@@ -13,6 +13,7 @@ import com.example.agricultureautomationapp.apiservices.LoginApiService
 import com.example.agricultureautomationapp.apiservices.LoginRequest
 import com.example.agricultureautomationapp.apiservices.LoginResponse
 import com.example.agricultureautomationapp.environments.EnvironmentsActivity
+import com.example.agricultureautomationapp.sharedpreferences.SharedPreferences
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,7 +23,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 class LoginActivity : AppCompatActivity()  {
 
     private val BASE_URL = "http://10.0.2.2:8080";
-
     private lateinit var emailInput: EditText
     private lateinit var passwordInput: EditText
     private lateinit var loginButton: Button
@@ -73,7 +73,13 @@ class LoginActivity : AppCompatActivity()  {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if(response.isSuccessful) {
                     val loginResponse = response.body()
-                    Log.d(TAG, "Login successful, Token: ${loginResponse?.userId}")
+                    val userId = loginResponse?.userId
+                    if (userId != null) {
+                        Log.d(TAG, "Login successful, User ID: $userId")
+                        SharedPreferences.saveUserId(this@LoginActivity, userId)
+                    }
+                    emailInput.setText("");
+                    passwordInput.setText("");
                     startActivity(Intent(this@LoginActivity, EnvironmentsActivity::class.java))
                 } else {
                     val loginResponse = response.body()

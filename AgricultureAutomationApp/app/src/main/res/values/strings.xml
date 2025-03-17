@@ -11,4 +11,11 @@
     <string name="register_question">Register?</string>
     <string name="empty_login_fields">Empty fields</string>
     <string name="invalid_email_format">Invalid email format</string>
+
+    <!--  Environment  -->
+    <string name="environments">Environments</string>
+    <string name="environment_name">Environment Name</string>
+    <string name="raspberry_id">Raspberry Id</string>
+    <string name="raspberry_ip">Raspberry IP Address</string>
+    <string name="add_environment">Add Environment</string>
 </resources>

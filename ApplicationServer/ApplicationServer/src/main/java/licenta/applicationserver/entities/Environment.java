@@ -27,6 +27,6 @@ public class Environment {
     @Column(name = "raspberry_ip")
     private String raspberryIP;
 
-    @Column(name = "access_code")
-    private String accessCode;
+    @Column(name = "environment_name")
+    private String environmentName;
 }
