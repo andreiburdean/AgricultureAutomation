@@ -15,6 +15,6 @@ interface EnvironmentApiService {
     @POST("/api/environment/{userId}/add-environment/")
     fun addEnvironment(@Path("userId") userId: Int, @Body environment: EnvironmentItem): Call<EnvironmentItem>
 
-    @DELETE("{userId}/delete-environment/{environmentId}")
+    @DELETE("/api/environment/{userId}/delete-environment/{environmentId}")
     fun deleteEnvironment(@Path("userId") userId: Int, @Path("environmentId") environmentId: Int): Call<Void>
 }

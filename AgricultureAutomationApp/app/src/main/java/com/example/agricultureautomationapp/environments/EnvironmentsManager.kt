@@ -76,5 +76,31 @@ class EnvironmentsManager(private val context: Context) {
             }
         })
     }
+
+    fun deleteEnvironment(environment: EnvironmentItem, onResult: (Boolean) -> Unit
+    ) {
+        val apiService = getApiService()
+        val userId = SharedPreferences.getUserId(context)
+
+        val call = apiService.deleteEnvironment(userId, environment.environmentId ?: 0)
+
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("EnvironmentsManager", "Environment deleted successfully")
+                    environmentsList.remove(environment)
+                    onResult(true)
+                } else {
+                    Log.e("EnvironmentsManager", "Failed to delete environment: ${response.code()}")
+                    onResult(false)
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("EnvironmentsManager", "Error deleting environment: ${t.message}")
+                onResult(false)
+            }
+        })
+    }
 }
 

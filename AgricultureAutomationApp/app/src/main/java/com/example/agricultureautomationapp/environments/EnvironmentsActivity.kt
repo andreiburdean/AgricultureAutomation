@@ -1,6 +1,5 @@
 package com.example.agricultureautomationapp.environments
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -26,6 +25,7 @@ class EnvironmentsActivity : AppCompatActivity() {
     private lateinit var raspberryIdInput: EditText
     private lateinit var raspberryIpInput: EditText
     private lateinit var environmentNameInput: EditText
+    private lateinit var environmentsManager: EnvironmentsManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,9 +40,9 @@ class EnvironmentsActivity : AppCompatActivity() {
         raspberryIpInput = findViewById(R.id.raspberry_ip_field)
         environmentNameInput = findViewById(R.id.environment_name_field)
 
+        environmentsManager = EnvironmentsManager(this)
         recyclerView.layoutManager = LinearLayoutManager(this)
-
-        adapter = EnvironmentsListAdapter(mutableListOf())
+        adapter = EnvironmentsListAdapter(mutableListOf(), environmentsManager)
         recyclerView.adapter = adapter
 
         addButton.setOnClickListener {
@@ -60,7 +60,7 @@ class EnvironmentsActivity : AppCompatActivity() {
             val raspberryIp = raspberryIpInput.text.toString().trim()
             val envName = environmentNameInput.text.toString().trim()
             if (envName.isNotEmpty()) {
-                val newEnvironment = EnvironmentItem(raspberryId, raspberryIp, envName)
+                val newEnvironment = EnvironmentItem(raspberryId = raspberryId, raspberryIp =  raspberryIp, environmentName = envName)
                 environmentsManager.addEnvironment(newEnvironment) { updatedList ->
                     adapter.updateList(updatedList)
                     Toast.makeText(this, "Environment added!", Toast.LENGTH_SHORT).show()
@@ -76,6 +76,16 @@ class EnvironmentsActivity : AppCompatActivity() {
 
         environmentsManager.fetchEnvironments { environments ->
             adapter.updateList(environments)
+        }
+    }
+
+    private fun deleteEnvironment(environment: EnvironmentItem) {
+        environmentsManager.deleteEnvironment(environment) { success ->
+            if (success) {
+                adapter.removeItem(environment)
+            } else {
+                Log.e("EnvironmentsActivity", "Failed to delete environment")
+            }
         }
     }
 }

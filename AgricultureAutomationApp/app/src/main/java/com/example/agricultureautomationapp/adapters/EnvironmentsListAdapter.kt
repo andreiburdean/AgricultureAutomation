@@ -4,16 +4,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agricultureautomationapp.R
+import com.example.agricultureautomationapp.environments.EnvironmentsManager
 import com.example.agricultureautomationapp.models.EnvironmentItem
 
-class EnvironmentsListAdapter(private var environments: MutableList<EnvironmentItem>) :
-    RecyclerView.Adapter<EnvironmentsListAdapter.EnvironmentViewHolder>() {
+class EnvironmentsListAdapter(
+    private var environments: MutableList<EnvironmentItem>,
+    private val environmentsManager: EnvironmentsManager
+) : RecyclerView.Adapter<EnvironmentsListAdapter.EnvironmentViewHolder>() {
 
     class EnvironmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val environmentName: TextView = itemView.findViewById(R.id.environment_name)
+        val deleteButton: ImageButton = itemView.findViewById(R.id.delete_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EnvironmentViewHolder {
@@ -25,6 +30,16 @@ class EnvironmentsListAdapter(private var environments: MutableList<EnvironmentI
     override fun onBindViewHolder(holder: EnvironmentViewHolder, position: Int) {
         val environment = environments[position]
         holder.environmentName.text = environment.environmentName
+
+        holder.deleteButton.setOnClickListener {
+            environmentsManager.deleteEnvironment(environment) { success ->
+                if (success) {
+                    removeItem(environment)
+                } else {
+                    Log.e("EnvironmentsListAdapter", "Failed to delete environment from API")
+                }
+            }
+        }
     }
 
     override fun getItemCount(): Int = environments.size
@@ -35,4 +50,10 @@ class EnvironmentsListAdapter(private var environments: MutableList<EnvironmentI
         environments.addAll(newEnvironments)
         notifyDataSetChanged()
     }
+
+    fun removeItem(environment: EnvironmentItem) {
+        environments.remove(environment)
+        notifyDataSetChanged()
+    }
 }
+

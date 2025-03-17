@@ -1,7 +1,18 @@
 package com.example.agricultureautomationapp.models
 
-data class EnvironmentItem(
-    val raspberryId: Int,
-    val raspberryIp: String,
-    val environmentName: String,
-)
+class EnvironmentItem {
+    var environmentId: Int?
+    var raspberryId: Int
+    var raspberryIp: String
+    var environmentName: String
+
+    constructor(environmentId: Int?, raspberryId: Int, raspberryIp: String, environmentName: String) {
+        this.environmentId = environmentId
+        this.raspberryId = raspberryId
+        this.raspberryIp = raspberryIp
+        this.environmentName = environmentName
+    }
+
+    constructor(raspberryId: Int, raspberryIp: String, environmentName: String) :
+            this(null, raspberryId, raspberryIp, environmentName)
+}
