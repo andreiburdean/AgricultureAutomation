@@ -77,8 +77,7 @@ class EnvironmentsManager(private val context: Context) {
         })
     }
 
-    fun deleteEnvironment(environment: EnvironmentItem, onResult: (Boolean) -> Unit
-    ) {
+    fun deleteEnvironment(environment: EnvironmentItem, onResult: (Boolean) -> Unit) {
         val apiService = getApiService()
         val userId = SharedPreferences.getUserId(context)
 

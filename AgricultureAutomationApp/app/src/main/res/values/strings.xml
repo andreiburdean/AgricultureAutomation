@@ -14,8 +14,15 @@
 
     <!--  Environment  -->
     <string name="environments">Environments</string>
+    <string name="environment">Environment</string>
     <string name="environment_name">Environment Name</string>
     <string name="raspberry_id">Raspberry Id</string>
     <string name="raspberry_ip">Raspberry IP Address</string>
     <string name="add_environment">Add Environment</string>
+
+    <!--  Programs  -->
+    <string name="add_program">Add Program</string>
+    <string name="select_program">Select Program</string>
+    <string name="program_name">Program Name</string>
+
 </resources>

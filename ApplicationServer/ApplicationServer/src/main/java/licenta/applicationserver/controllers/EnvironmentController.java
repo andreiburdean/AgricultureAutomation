@@ -1,6 +1,5 @@
 package licenta.applicationserver.controllers;
 
-import licenta.applicationserver.dtos.AccessRequest;
 import licenta.applicationserver.dtos.EnvironmentDTO;
 import licenta.applicationserver.entities.User;
 import licenta.applicationserver.services.UserService;

@@ -1,4 +1,4 @@
-package com.example.agricultureautomationapp.adapters
+package com.example.agricultureautomationapp.environments
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,13 +8,9 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agricultureautomationapp.R
-import com.example.agricultureautomationapp.environments.EnvironmentsManager
 import com.example.agricultureautomationapp.models.EnvironmentItem
 
-class EnvironmentsListAdapter(
-    private var environments: MutableList<EnvironmentItem>,
-    private val environmentsManager: EnvironmentsManager
-) : RecyclerView.Adapter<EnvironmentsListAdapter.EnvironmentViewHolder>() {
+class EnvironmentsListAdapter(private var environments: MutableList<EnvironmentItem>, private val environmentsManager: EnvironmentsManager, private val onItemClick: (EnvironmentItem) -> Unit) : RecyclerView.Adapter<EnvironmentsListAdapter.EnvironmentViewHolder>() {
 
     class EnvironmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val environmentName: TextView = itemView.findViewById(R.id.environment_name)
@@ -30,6 +26,10 @@ class EnvironmentsListAdapter(
     override fun onBindViewHolder(holder: EnvironmentViewHolder, position: Int) {
         val environment = environments[position]
         holder.environmentName.text = environment.environmentName
+
+        holder.itemView.setOnClickListener {
+            onItemClick(environment)
+        }
 
         holder.deleteButton.setOnClickListener {
             environmentsManager.deleteEnvironment(environment) { success ->

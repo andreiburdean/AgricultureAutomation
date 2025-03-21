@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="default_program_spinner">
+        <item>Delete</item>
+    </string-array>
+
+    <string-array name="custom_program_spinner">
+        <item>Delete</item>
+        <item>Edit</item>
+    </string-array>
+
+    <string-array name="program_options_spinner">
+        <item>Agronomical</item>
+        <item>Horticultural</item>
+        <item>Pomological</item>
+        <item>Viticultural</item>
+        <item>Custom</item>
+    </string-array>
+
+    <string-array name="upper_bar_options_spinner">
+        <item>Add</item>
+        <item>Control</item>
+    </string-array>
+</resources>

@@ -13,12 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AgricultureAutomationApp"
-        android:usesCleartextTraffic="true"
-        tools:targetApi="33">
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".login.LoginActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.AgricultureAutomationApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,6 +31,10 @@
 
         <activity
             android:name=".environments.EnvironmentsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".programs.ProgramsActivity"
             android:exported="false" />
     </application>
 

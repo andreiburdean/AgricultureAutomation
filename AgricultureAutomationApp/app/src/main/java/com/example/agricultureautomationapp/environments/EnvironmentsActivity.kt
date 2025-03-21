@@ -1,5 +1,6 @@
 package com.example.agricultureautomationapp.environments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,8 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agricultureautomationapp.R
-import com.example.agricultureautomationapp.adapters.EnvironmentsListAdapter
 import com.example.agricultureautomationapp.models.EnvironmentItem
+import com.example.agricultureautomationapp.programs.ProgramsActivity
+import com.example.agricultureautomationapp.sharedpreferences.SharedPreferences
 
 class EnvironmentsActivity : AppCompatActivity() {
 
@@ -42,7 +44,13 @@ class EnvironmentsActivity : AppCompatActivity() {
 
         environmentsManager = EnvironmentsManager(this)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = EnvironmentsListAdapter(mutableListOf(), environmentsManager)
+        adapter = EnvironmentsListAdapter(mutableListOf(), environmentsManager) { selectedEnvironment ->
+            val intent = Intent(this@EnvironmentsActivity, ProgramsActivity::class.java)
+            selectedEnvironment.environmentId?.let { environmentId ->
+                SharedPreferences.saveEnvironmentId(this, environmentId)
+            }
+            startActivity(intent)
+        }
         recyclerView.adapter = adapter
 
         addButton.setOnClickListener {
@@ -52,8 +60,6 @@ class EnvironmentsActivity : AppCompatActivity() {
         closeButton.setOnClickListener {
             addForm.visibility = View.GONE
         }
-
-        val environmentsManager = EnvironmentsManager(this@EnvironmentsActivity)
 
         addEnvironmentButton.setOnClickListener {
             val raspberryId = raspberryIdInput.text.toString().toInt()
@@ -76,16 +82,6 @@ class EnvironmentsActivity : AppCompatActivity() {
 
         environmentsManager.fetchEnvironments { environments ->
             adapter.updateList(environments)
-        }
-    }
-
-    private fun deleteEnvironment(environment: EnvironmentItem) {
-        environmentsManager.deleteEnvironment(environment) { success ->
-            if (success) {
-                adapter.removeItem(environment)
-            } else {
-                Log.e("EnvironmentsActivity", "Failed to delete environment")
-            }
         }
     }
 }

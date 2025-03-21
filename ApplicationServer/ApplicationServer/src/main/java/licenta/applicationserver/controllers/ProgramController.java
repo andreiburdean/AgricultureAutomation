@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000"})
@@ -52,6 +54,11 @@ public class ProgramController {
 
         Program newProgram = programService.addProgram(program);
         return new ResponseEntity<>(newProgram, HttpStatus.CREATED);
+    }
+
+    @GetMapping("{environmentId}/get-programs/")
+    public ResponseEntity<List<Program>> getProgramsByEnvironmentId(@PathVariable Integer environmentId) {
+        return programService.findProgramsByEnvironmentId(environmentId);
     }
 
     @PostMapping("/test-send")
