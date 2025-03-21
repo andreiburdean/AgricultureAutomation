@@ -2,26 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/programs_activity"
+    android:clipToPadding="false"
+    android:clipChildren="false"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
-
-    <LinearLayout
-        android:id="@+id/options_spinner_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="150dp"
-        android:layout_marginTop="-25dp"
-        android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/upper_box">
-
-        <Spinner
-            android:id="@+id/options_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"/>
-    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/upper_box"
@@ -59,11 +45,40 @@
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <LinearLayout
+        android:id="@+id/environment_options_dropdown"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical"
+        android:elevation="10dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf = "parent"
+        app:layout_constraintEnd_toEndOf = "parent">
+
+        <Button
+            android:id="@+id/add"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:background="@color/button_grey"
+            android:text="@string/add"
+            android:textSize="25sp" />
+
+        <Button
+            android:id="@+id/control"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:background="@color/button_grey"
+            android:text="@string/control"
+            android:textSize="25sp" />
+    </LinearLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/add_form"
         android:layout_width="400dp"
         android:layout_height="500dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="150dp"
         android:background="@drawable/box_border"
         android:elevation="10dp"
         android:visibility="gone"
@@ -71,6 +86,39 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/triangle_right"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:src="@drawable/white_triangle_right"
+            android:layout_marginTop="14dp"
+            android:visibility="visible"
+            app:layout_constraintStart_toEndOf="@+id/select_program"
+            app:layout_constraintTop_toTopOf="@+id/select_program"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <ImageView
+            android:id="@+id/triangle_down"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:src="@drawable/white_triangle_down"
+            android:layout_marginTop="14dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@+id/select_program"
+            app:layout_constraintTop_toTopOf="@+id/select_program"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/select_program"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_program"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toTopOf="@+id/programs_dropdown"
+            app:layout_constraintStart_toStartOf="@+id/programs_dropdown"
+            app:layout_constraintEnd_toEndOf = "@+id/programs_dropdown"/>
 
         <ImageButton
             android:id="@+id/close_button"
@@ -84,25 +132,59 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-        <TextView
-            android:id="@+id/select_program"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/select_program"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            app:layout_constraintBottom_toTopOf="@+id/program_types_spinner"
-            app:layout_constraintStart_toStartOf="@+id/program_types_spinner" />
-
-        <Spinner
-            android:id="@+id/program_types_spinner"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/programs_dropdown"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="100dp"
-            android:layout_marginStart="-125dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            android:layout_marginEnd="10dp"
+            android:orientation="vertical"
+            android:elevation="10dp"
+            android:visibility="invisible"
+            app:layout_constraintTop_toTopOf = "parent"
+            app:layout_constraintEnd_toEndOf = "parent"
+            app:layout_constraintStart_toStartOf = "parent">
+
+            <Button
+                android:id="@+id/agronomical"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/button_grey"
+                android:text="@string/agronomical"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/horticultural"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/button_grey"
+                android:text="@string/horticultural"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/pomological"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/button_grey"
+                android:text="@string/pomological"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/viticulltural"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/button_grey"
+                android:text="@string/viticultural"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/custom"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/button_grey"
+                android:text="@string/custom"
+                android:textSize="20sp" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/add_program_button"
@@ -121,6 +203,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/programs_recycler"
+        android:clipToPadding="false"
+        android:clipChildren="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="vertical"

@@ -4,74 +4,27 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.Spinner
+import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agricultureautomationapp.R
 import com.example.agricultureautomationapp.models.ProgramItem
 
-class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, private val programsManager: ProgramsManager) : RecyclerView.Adapter<ProgramsListAdapter.ProgramViewHolder>() {
+class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, private val programsManager: ProgramsManager, private val onItemClick: (ProgramItem) -> Unit) : RecyclerView.Adapter<ProgramsListAdapter.ProgramViewHolder>() {
 
-    inner class ProgramViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val programName: TextView = view.findViewById(R.id.program_name)
-        val statusActive: ImageView = view.findViewById(R.id.status_active)
-        val statusInactive: ImageView = view.findViewById(R.id.status_inactive)
-        val optionsButton: ImageButton = view.findViewById(R.id.options_button)
-        val optionsSpinner: Spinner = view.findViewById(R.id.program_options_spinner)
-
-        fun bind(program: ProgramItem) {
-            programName.text = program.programName
-
-            val options = listOf("Edit", "Delete", "Control")
-            val spinnerAdapter = ArrayAdapter(
-                itemView.context,
-                android.R.layout.simple_spinner_dropdown_item,
-                options
-            )
-            optionsSpinner.adapter = spinnerAdapter
-
-            optionsSpinner.visibility = View.GONE
-
-            optionsButton.setOnClickListener {
-                optionsSpinner.visibility =
-                    if (optionsSpinner.visibility == View.GONE) View.VISIBLE else View.GONE
-                optionsSpinner.performClick()
-            }
-
-            optionsSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val selectedOption = options[position]
-                    when (selectedOption) {
-                        "Edit" -> Toast.makeText(
-                            itemView.context,
-                            "Edit ${program.programName}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        "Delete" -> Toast.makeText(
-                            itemView.context,
-                            "Delete ${programName}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    optionsSpinner.visibility = View.GONE
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>) {
-                    optionsSpinner.visibility = View.GONE
-                }
-            }
-        }
+    inner class ProgramViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val programName: TextView = itemView.findViewById(R.id.program_name)
+        val statusActive: ImageView = itemView.findViewById(R.id.status_active)
+        val statusInactive: ImageView = itemView.findViewById(R.id.status_inactive)
+        val optionsButton: ImageButton = itemView.findViewById(R.id.options_button)
+        val optionsDropdown: LinearLayout = itemView.findViewById(R.id.program_options_dropdown)
+        val start: Button = itemView.findViewById(R.id.start)
+        val stop: Button = itemView.findViewById(R.id.stop)
+        val edit: Button = itemView.findViewById(R.id.edit)
+        val delete: Button = itemView.findViewById(R.id.delete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgramViewHolder {
@@ -83,6 +36,12 @@ class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, privat
     override fun onBindViewHolder(holder: ProgramViewHolder, position: Int) {
         val program = programs[position]
         holder.programName.text = program.programName
+        holder.optionsDropdown.visibility = View.GONE
+        var programStatus = program.status
+        var programName = program.programName
+
+        holder.optionsButton.elevation = 20f
+        holder.optionsButton.bringToFront()
 
         if (program.status == 1) {
             holder.statusActive.visibility = View.VISIBLE
@@ -90,6 +49,53 @@ class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, privat
         } else {
             holder.statusActive.visibility = View.GONE
             holder.statusInactive.visibility = View.VISIBLE
+        }
+
+        holder.optionsButton.setOnClickListener {
+            if (holder.optionsDropdown.visibility == View.VISIBLE) {
+                holder.optionsDropdown.visibility = View.INVISIBLE
+            } else {
+                holder.optionsDropdown.visibility = View.VISIBLE
+
+                if(programStatus == 1){
+                    holder.start.visibility = View.GONE
+                    holder.stop.visibility = View.VISIBLE
+                }else{
+                    holder.start.visibility = View.VISIBLE
+                    holder.stop.visibility = View.GONE
+                }
+
+                if(programName == "Custom"){
+                    holder.edit.visibility = View.VISIBLE
+                }else{
+                    holder.edit.visibility = View.GONE
+                }
+            }
+        }
+
+        holder.start.setOnClickListener {
+            holder.optionsDropdown.visibility = View.GONE
+            holder.optionsDropdown.requestLayout()
+        }
+
+        holder.stop.setOnClickListener {
+            holder.optionsDropdown.visibility = View.GONE
+            Log.d("ceva", "1")
+            holder.optionsDropdown.requestLayout()
+        }
+
+        holder.edit.setOnClickListener {
+            holder.optionsDropdown.visibility = View.GONE
+            holder.optionsDropdown.requestLayout()
+        }
+
+        holder.delete.setOnClickListener {
+            holder.optionsDropdown.visibility = View.GONE
+            holder.optionsDropdown.requestLayout()
+        }
+
+        holder.itemView.setOnClickListener {
+            onItemClick(program)
         }
     }
 

@@ -2,6 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list_item"
+    android:clipToPadding="false"
+    android:clipChildren="false"
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:background="@drawable/environment_upper_box_border"
@@ -59,11 +61,50 @@
         app:layout_constraintVertical_bias="0.5"
         tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-    <Spinner
-        android:id="@+id/program_options_spinner"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        app:layout_constraintEnd_toEndOf="parent"
+    <LinearLayout
+        android:id="@+id/program_options_dropdown"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="0dp"
+        android:orientation="vertical"
+        android:elevation="100dp"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/options_button" />
+        app:layout_constraintTop_toTopOf = "parent"
+        app:layout_constraintEnd_toEndOf = "parent">
+
+        <Button
+            android:id="@+id/start"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:background="@color/button_grey"
+            android:text="@string/start"
+            android:textSize="25sp" />
+
+        <Button
+            android:id="@+id/stop"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:background="@color/button_grey"
+            android:text="@string/stop"
+            android:textSize="25sp" />
+
+        <Button
+            android:id="@+id/edit"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:background="@color/button_grey"
+            android:text="@string/edit"
+            android:textSize="25sp" />
+
+        <Button
+            android:id="@+id/delete"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:background="@color/button_grey"
+            android:text="@string/delete"
+            android:textSize="25sp" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
