@@ -12,8 +12,8 @@ interface ProgramApiService {
     @GET("/api/program/{environmentId}/get-programs/")
     fun getPrograms(@Path("environmentId") environmentId: Int): Call<List<ProgramItem>>
 
-    @POST("/api/program/{userId}/add-program/")
-    fun addProgram(@Path("userId") userId: Int, @Body program: ProgramItem): Call<ProgramItem>
+    @POST("/api/program/{environmentId}/add-program/")
+    fun addProgram(@Path("environmentId") environmentId: Int, @Body program: ProgramItem): Call<ProgramItem>
 
     @DELETE("/api/program/{userId}/delete-program/{programId}")
     fun deleteProgram(@Path("userId") userId: Int, @Path("programId") programId: Int): Call<Void>

@@ -9,6 +9,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agricultureautomationapp.R
 import com.example.agricultureautomationapp.models.ProgramItem
@@ -21,10 +22,10 @@ class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, privat
         val statusInactive: ImageView = itemView.findViewById(R.id.status_inactive)
         val optionsButton: ImageButton = itemView.findViewById(R.id.options_button)
         val optionsDropdown: LinearLayout = itemView.findViewById(R.id.program_options_dropdown)
-        val start: Button = itemView.findViewById(R.id.start)
-        val stop: Button = itemView.findViewById(R.id.stop)
-        val edit: Button = itemView.findViewById(R.id.edit)
-        val delete: Button = itemView.findViewById(R.id.delete)
+        val start: ImageButton = itemView.findViewById(R.id.start)
+        val stop: ImageButton = itemView.findViewById(R.id.stop)
+        val edit: ImageButton = itemView.findViewById(R.id.edit)
+        val delete: ImageButton = itemView.findViewById(R.id.delete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgramViewHolder {
@@ -39,9 +40,6 @@ class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, privat
         holder.optionsDropdown.visibility = View.GONE
         var programStatus = program.status
         var programName = program.programName
-
-        holder.optionsButton.elevation = 20f
-        holder.optionsButton.bringToFront()
 
         if (program.status == 1) {
             holder.statusActive.visibility = View.VISIBLE

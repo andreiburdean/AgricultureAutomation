@@ -53,30 +53,30 @@ class ProgramsManager(private val context: Context) {
             }
         })
     }
-//
-//    fun addEnvironment(environment: EnvironmentItem, onResult: (List<EnvironmentItem>) -> Unit) {
-//        val apiService = getApiService()
-//        val userId = SharedPreferences.getUserId(context)
-//
-//        apiService.addEnvironment(userId, environment).enqueue(object : Callback<EnvironmentItem> {
-//            override fun onResponse(call: Call<EnvironmentItem>, response: Response<EnvironmentItem>
-//            ) {
-//                if (response.isSuccessful) {
-//                    response.body()?.let {
-//                        environmentsList.add(it)
-//                    }
-//                    onResult(environmentsList)
-//                } else {
-//                    Log.e("EnvironmentManager", "Failed to add environment: ${response.code()}")
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<EnvironmentItem>, t: Throwable) {
-//                Log.e("EnvironmentManager", "Failed to add environment: ${t.message}")
-//            }
-//        })
-//    }
-//
+
+    fun addProgram(program: ProgramItem, onResult: (List<ProgramItem>) -> Unit) {
+        val apiService = getApiService()
+        val environmentId = SharedPreferences.getEnvironmentId(context)
+
+        apiService.addProgram(environmentId, program).enqueue(object : Callback<ProgramItem> {
+            override fun onResponse(call: Call<ProgramItem>, response: Response<ProgramItem>
+            ) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        programsList.add(it)
+                    }
+                    onResult(programsList)
+                } else {
+                    Log.e("EnvironmentManager", "Failed to add environment: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ProgramItem>, t: Throwable) {
+                Log.e("EnvironmentManager", "Failed to add environment: ${t.message}")
+            }
+        })
+    }
+
 //    fun deleteProgram(program: ProgramItem, onResult: (Boolean) -> Unit) {
 //        val apiService = getApiService()
 //        val userId = SharedPreferences.getUserId(context)

@@ -31,7 +31,7 @@ const char* password = "xaM3ApJwYu";
 // const char* serverHost = "192.168.100.137";
 const char* serverHost = "192.168.1.130";
 const int   serverPort = 5000;
-const char* serverPathWS = "/ws";
+// const char* serverPathWS = "/ws";
 const char* serverURL = "http://192.168.1.130:5000/receive-sensor-data";
 
 void setup() {
@@ -60,11 +60,11 @@ void setup() {
   Serial.println("\nWiFi connected");
 
   //endpoint setup
-  if (client.connect(serverHost, serverPort, serverPathWS)) {
-    Serial.println("Connected to WebSocket server");
-  } else {
-    Serial.println("Failed to connect to WebSocket server");
-  }
+  // if (client.connect(serverHost, serverPort, serverPathWS)) {
+  //   Serial.println("Connected to WebSocket server");
+  // } else {
+  //   Serial.println("Failed to connect to WebSocket server");
+  // }
 }
 
 void loop() {
@@ -98,7 +98,6 @@ void loop() {
     String jsonData;
     serializeJson(doc, jsonData);
 
-    Serial.print("Sending sensor data: ");
     Serial.println(jsonData);
 
     //POST request
@@ -120,5 +119,5 @@ void loop() {
     Serial.println("WiFi disconnected, cannot send data.");
   }
 
-  delay(1000);  
+  delay(100);  
 }

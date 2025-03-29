@@ -4,15 +4,18 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agricultureautomationapp.R
+import com.example.agricultureautomationapp.models.EnvironmentItem
 
 class ProgramsActivity : AppCompatActivity() {
 
@@ -35,7 +38,7 @@ class ProgramsActivity : AppCompatActivity() {
     private lateinit var pomological: Button
     private lateinit var viticultural: Button
     private lateinit var custom: Button
-
+    private lateinit var programNameField: EditText
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,10 +64,11 @@ class ProgramsActivity : AppCompatActivity() {
         pomological = findViewById(R.id.pomological)
         viticultural = findViewById(R.id.viticulltural)
         custom = findViewById(R.id.custom)
+        programNameField = findViewById(R.id.program_name_field)
 
         programsManager = ProgramsManager(this)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = ProgramsListAdapter(mutableListOf(), programsManager) { selectedProgram -> }
+        adapter = ProgramsListAdapter(mutableListOf(), programsManager) { selectedProgram -> environmentOptionsLayout.visibility = View.GONE}
 
         recyclerView.adapter = adapter
 
@@ -145,6 +149,27 @@ class ProgramsActivity : AppCompatActivity() {
             triangleDown.visibility = View.INVISIBLE
             triangleRight.visibility = View.VISIBLE
         }
+
+//        addProgramButton.setOnClickListener {
+//
+//            val raspberryId = raspberryIdInput.text.toString().toInt()
+//            val raspberryIp = raspberryIpInput.text.toString().trim()
+//            if (envName.isNotEmpty()) {
+//                val newEnvironment = EnvironmentItem(raspberryId = raspberryId, raspberryIp =  raspberryIp, environmentName = envName)
+//                environmentsManager.addEnvironment(newEnvironment) { updatedList ->
+//                    adapter.updateList(updatedList)
+//                    Toast.makeText(this, "Program added!", Toast.LENGTH_SHORT).show()
+//                    raspberryIdInput.setText("")
+//                    raspberryIpInput.setText("")
+//                    environmentNameInput.setText("")
+//                    addForm.visibility = View.GONE
+//                    selectProgram.setText("Select Program")
+//                    programNameField.setText("")
+//                }
+//            } else {
+//                Toast.makeText(this, "Please fill out the fields!", Toast.LENGTH_SHORT).show()
+//            }
+//        }
 
         programsManager.fetchPrograms { programs ->
             adapter.updateList(programs)

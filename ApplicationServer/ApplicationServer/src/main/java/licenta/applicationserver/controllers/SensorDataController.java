@@ -17,7 +17,6 @@ import java.util.Map;
 public class SensorDataController {
 
     Map<String, Double> sensorDataMap = new HashMap<>();
-
     {
         sensorDataMap.put("temperature", 0.0);
         sensorDataMap.put("humidity", 0.0);

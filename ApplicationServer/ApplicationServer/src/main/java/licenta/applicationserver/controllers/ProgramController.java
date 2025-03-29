@@ -33,18 +33,20 @@ public class ProgramController {
         this.programTypeService = programTypeService;
     }
 
-    @PostMapping("/add-program")
-    public ResponseEntity<Program> addProgram(@RequestBody ProgramDTO programDTO) {
+    @PostMapping("{environmentId}/add-program")
+    public ResponseEntity<Program> addProgram(@PathVariable Integer environmentId, @RequestBody ProgramDTO programDTO) {
 
-        Environment environment = environmentService.findEnvironmentById(programDTO.getEnvironmentId());
+        Environment environment = environmentService.findEnvironmentById(environmentId);
         if (environment == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+        System.out.println("CEVA");
 
         ProgramType programType = programTypeService.findProgramTypeById(programDTO.getProgramTypeId());
         if (programType == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+        System.out.println("CEVA2");
 
         Program program = new Program();
         program.setProgramName(programDTO.getProgramName());
@@ -53,24 +55,12 @@ public class ProgramController {
         program.setProgramType(programType);
 
         Program newProgram = programService.addProgram(program);
+        System.out.println("CEVA3");
         return new ResponseEntity<>(newProgram, HttpStatus.CREATED);
     }
 
     @GetMapping("{environmentId}/get-programs/")
     public ResponseEntity<List<Program>> getProgramsByEnvironmentId(@PathVariable Integer environmentId) {
         return programService.findProgramsByEnvironmentId(environmentId);
-    }
-
-    @PostMapping("/test-send")
-    public ResponseEntity<Integer> testRaspberryComSend(@RequestBody Integer value){
-        RaspberryRESTService sendToRPI5 = new RaspberryRESTService();
-        sendToRPI5.sendDummyData(value);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PostMapping("/receive-sensor-data")
-    public ResponseEntity<Integer> testRaspberryComRec(@RequestBody Object value){
-        System.out.println(value);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -94,8 +94,8 @@
             android:src="@drawable/white_triangle_right"
             android:layout_marginTop="14dp"
             android:visibility="visible"
-            app:layout_constraintStart_toEndOf="@+id/select_program"
-            app:layout_constraintTop_toTopOf="@+id/select_program"
+            app:layout_constraintStart_toEndOf="@id/select_program"
+            app:layout_constraintTop_toTopOf="@id/select_program"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         <ImageView
@@ -105,8 +105,8 @@
             android:src="@drawable/white_triangle_down"
             android:layout_marginTop="14dp"
             android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@+id/select_program"
-            app:layout_constraintTop_toTopOf="@+id/select_program"
+            app:layout_constraintStart_toEndOf="@id/select_program"
+            app:layout_constraintTop_toTopOf="@id/select_program"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         <TextView
@@ -116,9 +116,9 @@
             android:text="@string/select_program"
             android:textColor="@color/white"
             android:textSize="25sp"
-            app:layout_constraintBottom_toTopOf="@+id/programs_dropdown"
-            app:layout_constraintStart_toStartOf="@+id/programs_dropdown"
-            app:layout_constraintEnd_toEndOf = "@+id/programs_dropdown"/>
+            app:layout_constraintBottom_toTopOf="@id/programs_dropdown"
+            app:layout_constraintStart_toStartOf="@id/programs_dropdown"
+            app:layout_constraintEnd_toEndOf = "@id/programs_dropdown"/>
 
         <ImageButton
             android:id="@+id/close_button"
@@ -132,16 +132,44 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
+        <TextView
+            android:id="@+id/program_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/program_name"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@id/program_name_field"
+            app:layout_constraintStart_toStartOf="@id/program_name_field" />
+
+        <EditText
+            android:id="@+id/program_name_field"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="75dp"
+            android:background="@drawable/login_textfield"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@id/select_program"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
         <LinearLayout
             android:id="@+id/programs_dropdown"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:orientation="vertical"
             android:elevation="10dp"
             android:visibility="invisible"
-            app:layout_constraintTop_toTopOf = "parent"
+            app:layout_constraintTop_toBottomOf = "@id/select_program"
             app:layout_constraintEnd_toEndOf = "parent"
             app:layout_constraintStart_toStartOf = "parent">
 

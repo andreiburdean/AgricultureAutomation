@@ -2,30 +2,33 @@ import aiohttp
 import request_handlers
 from aiohttp import web
 from request_handlers import *
-import asyncio
-import json
-
-async def index(request):
-    html_content = """
-    <!doctype html>
-    <html>
-      <head>
-        <title>RPi WebSocket Server</title>
-      </head>
-      <body>
-        <h1>RPi WebSocket Server GUI</h1>
-        <p>This page is served over HTTP. Open your browser console to see WebSocket messages.</p>
-      </body>
-    </html>
-    """
-    return web.Response(text=html_content, content_type="text/html")
-
-app = web.Application()
-app.router.add_get('/', index)
-app.router.add_get('/ws', request_handlers.websocket_handler)
-app.router.add_post('/data', request_handlers.test_handle_post)
-app.router.add_post('/receive-sensor-data', request_handlers.handle_sensor_data_receive)
+from actuators import *
 
 
-if __name__ == '__main__':
-    web.run_app(app, host="0.0.0.0", port=5000)
+async def actuator_controller():
+    while True:
+        pump_control_logic()
+        fan_control_logic()
+        led_control_logic()
+        lcd_control_logic()
+        await asyncio.sleep(0)
+
+async def server():
+    app = web.Application()
+    app.router.add_post('/receive-sensor-data', handle_sensor_data_receive)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", 5000)
+    await site.start()
+    await asyncio.Event().wait()
+
+async def main():
+    await asyncio.gather(server(), actuator_controller())
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("Shutting down...")
+        exit_handler()

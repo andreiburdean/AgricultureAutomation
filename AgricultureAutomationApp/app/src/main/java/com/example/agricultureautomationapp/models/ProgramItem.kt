@@ -1,15 +1,18 @@
 package com.example.agricultureautomationapp.models
 
 class ProgramItem {
-    var environmentId: Int
-    var programId: Int
+    var programId: Int?
+    var programTypeId: Int
     var programName: String
     var status: Int
 
-    constructor(environmentId: Int, programId: Int, programName: String, status: Int) {
-        this.environmentId = environmentId
+    constructor(programId: Int?, programTypeId: Int, programName: String, status: Int) {
         this.programId = programId
+        this.programTypeId = programTypeId
         this.programName = programName
         this.status = status
     }
+
+    constructor(programTypeId: Int, programName: String, status: Int) :
+            this(null, programTypeId, programName, status)
 }
