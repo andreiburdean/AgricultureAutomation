@@ -4,15 +4,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agricultureautomationapp.R
 import com.example.agricultureautomationapp.models.ProgramItem
+import com.example.agricultureautomationapp.sharedpreferences.SharedPreferences
 
 class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, private val programsManager: ProgramsManager, private val onItemClick: (ProgramItem) -> Unit) : RecyclerView.Adapter<ProgramsListAdapter.ProgramViewHolder>() {
 
@@ -72,13 +71,29 @@ class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, privat
         }
 
         holder.start.setOnClickListener {
+            programsManager.startProgram(program.programId!!) { success ->
+                if (success) {
+                    for(item in programs){
+                        item.status = 0
+                    }
+                    program.status = 1
+                }
+                notifyDataSetChanged()
+            }
             holder.optionsDropdown.visibility = View.GONE
             holder.optionsDropdown.requestLayout()
         }
 
         holder.stop.setOnClickListener {
+            programsManager.stopProgram(program.programId!!) { success ->
+                if (success) {
+                    for(item in programs){
+                        item.status = 0
+                    }
+                }
+                notifyDataSetChanged()
+            }
             holder.optionsDropdown.visibility = View.GONE
-            Log.d("ceva", "1")
             holder.optionsDropdown.requestLayout()
         }
 
@@ -88,6 +103,11 @@ class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, privat
         }
 
         holder.delete.setOnClickListener {
+            programsManager.deleteProgram(program) { success ->
+                if (success) {
+                    removeItem(program)
+                }
+            }
             holder.optionsDropdown.visibility = View.GONE
             holder.optionsDropdown.requestLayout()
         }
@@ -105,10 +125,10 @@ class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, privat
         programs.addAll(newPrograms)
         notifyDataSetChanged()
     }
-//
-//    fun removeItem(environment: ProgramItem) {
-//        programs.remove(environment)
-//        notifyDataSetChanged()
-//    }
+
+    fun removeItem(program: ProgramItem) {
+        programs.remove(program)
+        notifyDataSetChanged()
+    }
 }
 

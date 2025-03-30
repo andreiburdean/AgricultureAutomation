@@ -28,7 +28,7 @@ public class EnvironmentController {
         this.userService = userService;
     }
 
-    @PostMapping("{userId}/add-environment/")
+    @PostMapping("{userId}/add-environment")
     public ResponseEntity<EnvironmentDTO> addEnvironment(@PathVariable Integer userId, @RequestBody EnvironmentDTO environmentDTO) {
 
         User user = userService.findUserById(userId);
@@ -48,7 +48,7 @@ public class EnvironmentController {
         return new ResponseEntity<>(newEnvironmentDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("{userId}/get-environments/")
+    @GetMapping("{userId}/get-environments")
     public ResponseEntity<List<Environment>> getEnvironmentsByUserId(@PathVariable Integer userId) {
         return environmentService.findEnvironmentsByUserId(userId);
     }

@@ -18,7 +18,6 @@ import java.util.List;
 
 @Controller
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000"})
 @RequestMapping("/api/program")
 public class ProgramController {
 
@@ -40,27 +39,59 @@ public class ProgramController {
         if (environment == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        System.out.println("CEVA");
 
         ProgramType programType = programTypeService.findProgramTypeById(programDTO.getProgramTypeId());
         if (programType == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        System.out.println("CEVA2");
 
         Program program = new Program();
         program.setProgramName(programDTO.getProgramName());
-        program.setStatus(programDTO.getStatus());
+        program.setStatus(0);
         program.setEnvironment(environment);
         program.setProgramType(programType);
 
         Program newProgram = programService.addProgram(program);
-        System.out.println("CEVA3");
         return new ResponseEntity<>(newProgram, HttpStatus.CREATED);
     }
 
-    @GetMapping("{environmentId}/get-programs/")
+    @GetMapping("{environmentId}/get-programs")
     public ResponseEntity<List<Program>> getProgramsByEnvironmentId(@PathVariable Integer environmentId) {
         return programService.findProgramsByEnvironmentId(environmentId);
+    }
+
+    @DeleteMapping("{programId}/delete-program")
+    public ResponseEntity<Void> deleteProgram(@PathVariable Integer programId) {
+        if (programService.findProgramById(programId).isPresent()) {
+            programService.deleteProgram(programId);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("{environmentId}/{programId}/start-program")
+    public ResponseEntity<Boolean> startProgram(@PathVariable Integer environmentId, @PathVariable Integer programId) {
+        if(programService.stopPrograms(environmentId) != 0){
+            if(programService.startProgram(programId) != 0){
+                return new ResponseEntity<>(true, HttpStatus.OK);
+            }
+            else{
+                return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        else{
+            return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("{programId}/stop-program")
+    public ResponseEntity<Boolean> stopProgram(@PathVariable Integer programId) {
+        if(programService.stopProgram(programId) != 0){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

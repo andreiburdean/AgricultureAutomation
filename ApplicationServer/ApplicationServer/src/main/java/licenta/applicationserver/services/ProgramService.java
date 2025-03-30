@@ -1,6 +1,5 @@
 package licenta.applicationserver.services;
 
-import licenta.applicationserver.entities.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +21,8 @@ public class ProgramService {
         this.programRepository = programRepository;
     }
 
-    public Program addProgram(Program program) {
-        return programRepository.save(program);
+    public Optional<Program> findProgramById(Integer programId){
+        return programRepository.findByProgramId(programId);
     }
 
     public ResponseEntity<List<Program>> findProgramsByEnvironmentId(Integer environmentId){
@@ -37,13 +36,23 @@ public class ProgramService {
         }
     }
 
-    public String deleteProgram(Program program) {
-        Program existingProgram = programRepository.findByProgramId(program.getProgramId()).orElse(null);
+    public Program addProgram(Program program) {
+        return programRepository.save(program);
+    }
 
-        if (existingProgram != null) {
-            programRepository.deleteById(existingProgram.getProgramId());
-            return "Program deleted successfully.";
-        }
-        return "Program not found.";
+    public void deleteProgram(Integer programId) {
+        programRepository.deleteById(programId);
+    }
+
+    public Integer stopPrograms(Integer environmentId){
+        return programRepository.stopPrograms(environmentId);
+    }
+
+    public Integer startProgram(Integer programId){
+        return programRepository.startProgram(programId);
+    }
+
+    public Integer stopProgram(Integer programId){
+        return programRepository.stopProgram(programId);
     }
 }

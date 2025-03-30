@@ -9,12 +9,18 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ProgramApiService {
-    @GET("/api/program/{environmentId}/get-programs/")
+    @GET("/api/program/{environmentId}/get-programs")
     fun getPrograms(@Path("environmentId") environmentId: Int): Call<List<ProgramItem>>
 
-    @POST("/api/program/{environmentId}/add-program/")
+    @POST("/api/program/{environmentId}/add-program")
     fun addProgram(@Path("environmentId") environmentId: Int, @Body program: ProgramItem): Call<ProgramItem>
 
-    @DELETE("/api/program/{userId}/delete-program/{programId}")
-    fun deleteProgram(@Path("userId") userId: Int, @Path("programId") programId: Int): Call<Void>
+    @DELETE("/api/program/{programId}/delete-program")
+    fun deleteProgram(@Path("programId") programId: Int): Call<Void>
+
+    @POST("/api/program/{environmentId}/{programId}/start-program")
+    fun startProgram(@Path("environmentId") environmentId: Int, @Path("programId") programId: Int): Call<Boolean>
+
+    @POST("/api/program/{programId}/stop-program")
+    fun stopProgram(@Path("programId") programId: Int): Call<Boolean>
 }

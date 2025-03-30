@@ -9,10 +9,10 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface EnvironmentApiService {
-    @GET("/api/environment/{userId}/get-environments/")
+    @GET("/api/environment/{userId}/get-environments")
     fun getEnvironments(@Path("userId") userId: Int): Call<List<EnvironmentItem>>
 
-    @POST("/api/environment/{userId}/add-environment/")
+    @POST("/api/environment/{userId}/add-environment")
     fun addEnvironment(@Path("userId") userId: Int, @Body environment: EnvironmentItem): Call<EnvironmentItem>
 
     @DELETE("/api/environment/{userId}/delete-environment/{environmentId}")

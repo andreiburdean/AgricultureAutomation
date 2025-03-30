@@ -3,7 +3,6 @@ package com.example.agricultureautomationapp.programs
 import android.content.Context
 import android.util.Log
 
-import com.example.agricultureautomationapp.apiservices.EnvironmentApiService
 import com.example.agricultureautomationapp.apiservices.ProgramApiService
 import com.example.agricultureautomationapp.models.ProgramItem
 import com.example.agricultureautomationapp.sharedpreferences.SharedPreferences
@@ -77,29 +76,70 @@ class ProgramsManager(private val context: Context) {
         })
     }
 
-//    fun deleteProgram(program: ProgramItem, onResult: (Boolean) -> Unit) {
-//        val apiService = getApiService()
-//        val userId = SharedPreferences.getUserId(context)
-//
-//        val call = apiService.deleteEnvironment(userId, environment.environmentId ?: 0)
-//
-//        call.enqueue(object : Callback<Void> {
-//            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-//                if (response.isSuccessful) {
-//                    Log.d("EnvironmentsManager", "Environment deleted successfully")
-//                    environmentsList.remove(environment)
-//                    onResult(true)
-//                } else {
-//                    Log.e("EnvironmentsManager", "Failed to delete environment: ${response.code()}")
-//                    onResult(false)
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<Void>, t: Throwable) {
-//                Log.e("EnvironmentsManager", "Error deleting environment: ${t.message}")
-//                onResult(false)
-//            }
-//        })
-//    }
+    fun deleteProgram(program: ProgramItem, onResult: (Boolean) -> Unit) {
+        val apiService = getApiService()
+        val call = apiService.deleteProgram(program.programId!!)
+
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("ProgramsManager", "Program deleted successfully")
+                    programsList.remove(program)
+                    onResult(true)
+                } else {
+                    Log.e("ProgramsManager", "Failed to delete program: ${response.code()}")
+                    onResult(false)
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("ProgramsManager", "Error deleting program: ${t.message}")
+                onResult(false)
+            }
+        })
+    }
+
+    fun startProgram(programId: Int, onResult: (Boolean) -> Unit) {
+        val apiService = getApiService()
+        val environmentId = SharedPreferences.getEnvironmentId(context)
+        val call = apiService.startProgram(environmentId, programId)
+
+        call.enqueue(object : Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                if (response.isSuccessful) {
+                    onResult(response.body() ?: true)
+                } else {
+                    Log.e("ProgramsManager", "Failed to start program: ${response.code()}")
+                    onResult(false)
+                }
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                Log.e("ProgramsManager", "Error starting program: ${t.message}")
+                onResult(false)
+            }
+        })
+    }
+
+    fun stopProgram(programId: Int, onResult: (Boolean) -> Unit) {
+        val apiService = getApiService()
+        val call = apiService.stopProgram(programId)
+
+        call.enqueue(object : Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                if (response.isSuccessful) {
+                    onResult(response.body() ?: true)
+                } else {
+                    Log.e("ProgramsManager", "Failed to start program: ${response.code()}")
+                    onResult(false)
+                }
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                Log.e("ProgramsManager", "Error starting program: ${t.message}")
+                onResult(false)
+            }
+        })
+    }
 }
 

@@ -15,7 +15,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agricultureautomationapp.R
-import com.example.agricultureautomationapp.models.EnvironmentItem
+import com.example.agricultureautomationapp.models.ProgramItem
 
 class ProgramsActivity : AppCompatActivity() {
 
@@ -42,6 +42,7 @@ class ProgramsActivity : AppCompatActivity() {
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
+        var programTypeId: Int = 0
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.programs_activity)
@@ -117,6 +118,7 @@ class ProgramsActivity : AppCompatActivity() {
 
         agronomical.setOnClickListener {
             selectProgram.setText("Agronomical")
+            programTypeId = 1
             programsDropDown.visibility = View.INVISIBLE
             triangleDown.visibility = View.INVISIBLE
             triangleRight.visibility = View.VISIBLE
@@ -124,6 +126,7 @@ class ProgramsActivity : AppCompatActivity() {
 
         horticultural.setOnClickListener {
             selectProgram.setText("Horticultural")
+            programTypeId = 2
             programsDropDown.visibility = View.INVISIBLE
             triangleDown.visibility = View.INVISIBLE
             triangleRight.visibility = View.VISIBLE
@@ -131,6 +134,7 @@ class ProgramsActivity : AppCompatActivity() {
 
         pomological.setOnClickListener {
             selectProgram.setText("Pomological")
+            programTypeId = 3
             programsDropDown.visibility = View.INVISIBLE
             triangleDown.visibility = View.INVISIBLE
             triangleRight.visibility = View.VISIBLE
@@ -138,6 +142,7 @@ class ProgramsActivity : AppCompatActivity() {
 
         viticultural.setOnClickListener {
             selectProgram.setText("Viticultural")
+            programTypeId = 4
             programsDropDown.visibility = View.INVISIBLE
             triangleDown.visibility = View.INVISIBLE
             triangleRight.visibility = View.VISIBLE
@@ -145,31 +150,33 @@ class ProgramsActivity : AppCompatActivity() {
 
         custom.setOnClickListener {
             selectProgram.setText("Custom")
+            programTypeId = 5
             programsDropDown.visibility = View.INVISIBLE
             triangleDown.visibility = View.INVISIBLE
             triangleRight.visibility = View.VISIBLE
         }
 
-//        addProgramButton.setOnClickListener {
-//
-//            val raspberryId = raspberryIdInput.text.toString().toInt()
-//            val raspberryIp = raspberryIpInput.text.toString().trim()
-//            if (envName.isNotEmpty()) {
-//                val newEnvironment = EnvironmentItem(raspberryId = raspberryId, raspberryIp =  raspberryIp, environmentName = envName)
-//                environmentsManager.addEnvironment(newEnvironment) { updatedList ->
-//                    adapter.updateList(updatedList)
-//                    Toast.makeText(this, "Program added!", Toast.LENGTH_SHORT).show()
-//                    raspberryIdInput.setText("")
-//                    raspberryIpInput.setText("")
-//                    environmentNameInput.setText("")
-//                    addForm.visibility = View.GONE
-//                    selectProgram.setText("Select Program")
-//                    programNameField.setText("")
-//                }
-//            } else {
-//                Toast.makeText(this, "Please fill out the fields!", Toast.LENGTH_SHORT).show()
-//            }
-//        }
+        addProgramButton.setOnClickListener {
+
+            val programName = programNameField.text.toString().trim()
+            if (programName.isNotEmpty()) {
+                if(programTypeId != 0){
+                    val newProgram = ProgramItem(programTypeId, programName)
+                    programsManager.addProgram(newProgram) { updatedList ->
+                        adapter.updateList(updatedList)
+                        Toast.makeText(this, "Program added!", Toast.LENGTH_SHORT).show()
+                        addForm.visibility = View.GONE
+                        selectProgram.setText("Select Program")
+                        programNameField.setText("")
+                    }
+                }
+                else{
+                    Toast.makeText(this, "Please choose a program!", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Please fill out the fields!", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         programsManager.fetchPrograms { programs ->
             adapter.updateList(programs)
