@@ -18,11 +18,19 @@ public class CustomEnvironmentCondition {
 
     //Foreign Key
     @ManyToOne
+    @JoinColumn(name = "program_id", nullable = false)
+    private Program program;
+
+    @ManyToOne
     @JoinColumn(name = "program_type_id", nullable = false)
     private ProgramType programType;
 
-    //Foreign Key
-    @ManyToOne
-    @JoinColumn(name = "program_id", nullable = false)
-    private Program program;
+    @Column(name = "temperature")
+    private Double temperature;
+
+    @Column(name = "humidity")
+    private Double humidity;
+
+    @Column(name = "luminosity")
+    private Double luminosity;
 }

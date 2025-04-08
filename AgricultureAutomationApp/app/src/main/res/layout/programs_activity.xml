@@ -160,6 +160,98 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
+        <TextView
+            android:id="@+id/temperature_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/temperature"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:layout_marginTop="40dp"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@id/program_name_field"
+            app:layout_constraintTop_toBottomOf="@+id/select_program" />
+
+        <EditText
+            android:id="@+id/temperature_field"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:background="@drawable/login_textfield"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:layout_marginTop="70dp"
+            android:layout_marginStart="15dp"
+            android:inputType="number"
+            android:visibility="invisible"
+            android:gravity="center"
+            app:layout_constraintStart_toEndOf="@id/temperature_text"
+            app:layout_constraintTop_toTopOf="@id/select_program"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/humidity_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/humidity"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:layout_marginTop="25dp"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@id/program_name_field"
+            app:layout_constraintTop_toBottomOf="@+id/temperature_text" />
+
+        <EditText
+            android:id="@+id/humidity_field"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="60dp"
+            android:background="@drawable/login_textfield"
+            android:inputType="number"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:visibility="invisible"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="@+id/temperature_field"
+            app:layout_constraintStart_toEndOf="@id/humidity_text"
+            app:layout_constraintTop_toTopOf="@id/temperature_field"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/luminosity_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/luminosity"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:layout_marginTop="25dp"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@id/program_name_field"
+            app:layout_constraintTop_toBottomOf="@+id/humidity_text" />
+
+        <EditText
+            android:id="@+id/luminosity_field"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="60dp"
+            android:background="@drawable/login_textfield"
+            android:inputType="number"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:visibility="invisible"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="@+id/temperature_field"
+            app:layout_constraintStart_toEndOf="@id/luminosity_text"
+            app:layout_constraintTop_toTopOf="@id/humidity_field"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
         <LinearLayout
             android:id="@+id/programs_dropdown"
             android:layout_width="200dp"

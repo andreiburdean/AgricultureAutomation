@@ -35,6 +35,8 @@
     <string name="stop">Stop</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
-
+    <string name="temperature">Fan start temperature</string>
+    <string name="humidity">Fan start humidity</string>
+    <string name="luminosity">LED start luminosity</string>
 
 </resources>

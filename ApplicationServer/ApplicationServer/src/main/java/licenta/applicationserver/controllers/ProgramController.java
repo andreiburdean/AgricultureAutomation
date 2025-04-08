@@ -1,13 +1,11 @@
 package licenta.applicationserver.controllers;
 
 import licenta.applicationserver.dtos.ProgramDTO;
+import licenta.applicationserver.entities.CustomEnvironmentCondition;
 import licenta.applicationserver.entities.Environment;
 import licenta.applicationserver.entities.Program;
 import licenta.applicationserver.entities.ProgramType;
-import licenta.applicationserver.services.EnvironmentService;
-import licenta.applicationserver.services.ProgramService;
-import licenta.applicationserver.services.ProgramTypeService;
-import licenta.applicationserver.services.RaspberryRESTService;
+import licenta.applicationserver.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +20,15 @@ import java.util.List;
 public class ProgramController {
 
     private final ProgramService programService;
+
+    private final CustomEnvironmentConditionService customConditionService;
     private final EnvironmentService environmentService;
     private final ProgramTypeService programTypeService;
 
     @Autowired
-    public ProgramController(ProgramService programService, EnvironmentService environmentService, ProgramTypeService programTypeService) {
+    public ProgramController(ProgramService programService, CustomEnvironmentConditionService customConditionService, EnvironmentService environmentService, ProgramTypeService programTypeService) {
         this.programService = programService;
+        this.customConditionService = customConditionService;
         this.environmentService = environmentService;
         this.programTypeService = programTypeService;
     }
@@ -45,24 +46,45 @@ public class ProgramController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-        Program program = new Program();
-        program.setProgramName(programDTO.getProgramName());
-        program.setStatus(0);
-        program.setEnvironment(environment);
-        program.setProgramType(programType);
+        if(programType.getProgramTypeId() != 5){
 
-        Program newProgram = programService.addProgram(program);
-        return new ResponseEntity<>(newProgram, HttpStatus.CREATED);
+            Program program = new Program();
+            program.setProgramName(programDTO.getProgramName());
+            program.setStatus(0);
+            program.setEnvironment(environment);
+            program.setProgramType(programType);
+
+            Program newProgram = programService.addProgram(program);
+            return new ResponseEntity<>(newProgram, HttpStatus.CREATED);
+        }else{
+            Program program = new Program();
+            program.setProgramName(programDTO.getProgramName());
+            program.setStatus(0);
+            program.setEnvironment(environment);
+            program.setProgramType(programType);
+            Program newProgram = programService.addProgram(program);
+
+            CustomEnvironmentCondition customCondition = new CustomEnvironmentCondition();
+            customCondition.setProgram(newProgram);
+            customCondition.setProgramType(programType);
+            customCondition.setTemperature(programDTO.getTemperature());
+            customCondition.setHumidity(programDTO.getHumidity());
+            customCondition.setLuminosity(programDTO.getLuminosity());
+
+            customConditionService.addCustomCondition(customCondition);
+            return new ResponseEntity<>(newProgram, HttpStatus.CREATED);
+        }
     }
 
     @GetMapping("{environmentId}/get-programs")
-    public ResponseEntity<List<Program>> getProgramsByEnvironmentId(@PathVariable Integer environmentId) {
+    public ResponseEntity<List<ProgramDTO>> getProgramsByEnvironmentId(@PathVariable Integer environmentId) {
         return programService.findProgramsByEnvironmentId(environmentId);
     }
 
     @DeleteMapping("{programId}/delete-program")
     public ResponseEntity<Void> deleteProgram(@PathVariable Integer programId) {
         if (programService.findProgramById(programId).isPresent()) {
+            customConditionService.deleteCustomConditionByProgramId(programId);
             programService.deleteProgram(programId);
             return ResponseEntity.noContent().build();
         } else {

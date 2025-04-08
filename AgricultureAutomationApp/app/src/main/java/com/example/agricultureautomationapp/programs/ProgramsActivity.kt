@@ -39,6 +39,12 @@ class ProgramsActivity : AppCompatActivity() {
     private lateinit var viticultural: Button
     private lateinit var custom: Button
     private lateinit var programNameField: EditText
+    private lateinit var temperatureText: TextView
+    private lateinit var temperatureField: EditText
+    private lateinit var humidityText: TextView
+    private lateinit var humidityField: EditText
+    private lateinit var luminosityText: TextView
+    private lateinit var luminosityField: EditText
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +72,12 @@ class ProgramsActivity : AppCompatActivity() {
         viticultural = findViewById(R.id.viticulltural)
         custom = findViewById(R.id.custom)
         programNameField = findViewById(R.id.program_name_field)
+        temperatureText = findViewById(R.id.temperature_text)
+        temperatureField = findViewById(R.id.temperature_field)
+        humidityText = findViewById(R.id.humidity_text)
+        humidityField = findViewById(R.id.humidity_field)
+        luminosityText = findViewById(R.id.luminosity_text)
+        luminosityField = findViewById(R.id.luminosity_field)
 
         programsManager = ProgramsManager(this)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -94,6 +106,18 @@ class ProgramsActivity : AppCompatActivity() {
 
         closeButton.setOnClickListener{
             if(addForm.visibility == View.VISIBLE){
+                temperatureText.visibility = View.INVISIBLE
+                temperatureField.visibility = View.INVISIBLE
+                humidityText.visibility = View.INVISIBLE
+                humidityField.visibility = View.INVISIBLE
+                luminosityText.visibility = View.INVISIBLE
+                luminosityField.visibility = View.INVISIBLE
+
+                temperatureField.setText("")
+                humidityField.setText("")
+                luminosityField.setText("")
+                selectProgram.setText("Agronomical")
+
                 addForm.visibility = View.GONE
             }
         }
@@ -122,6 +146,13 @@ class ProgramsActivity : AppCompatActivity() {
             programsDropDown.visibility = View.INVISIBLE
             triangleDown.visibility = View.INVISIBLE
             triangleRight.visibility = View.VISIBLE
+
+            temperatureText.visibility = View.INVISIBLE
+            temperatureField.visibility = View.INVISIBLE
+            humidityText.visibility = View.INVISIBLE
+            humidityField.visibility = View.INVISIBLE
+            luminosityText.visibility = View.INVISIBLE
+            luminosityField.visibility = View.INVISIBLE
         }
 
         horticultural.setOnClickListener {
@@ -130,6 +161,13 @@ class ProgramsActivity : AppCompatActivity() {
             programsDropDown.visibility = View.INVISIBLE
             triangleDown.visibility = View.INVISIBLE
             triangleRight.visibility = View.VISIBLE
+
+            temperatureText.visibility = View.INVISIBLE
+            temperatureField.visibility = View.INVISIBLE
+            humidityText.visibility = View.INVISIBLE
+            humidityField.visibility = View.INVISIBLE
+            luminosityText.visibility = View.INVISIBLE
+            luminosityField.visibility = View.INVISIBLE
         }
 
         pomological.setOnClickListener {
@@ -138,6 +176,13 @@ class ProgramsActivity : AppCompatActivity() {
             programsDropDown.visibility = View.INVISIBLE
             triangleDown.visibility = View.INVISIBLE
             triangleRight.visibility = View.VISIBLE
+
+            temperatureText.visibility = View.INVISIBLE
+            temperatureField.visibility = View.INVISIBLE
+            humidityText.visibility = View.INVISIBLE
+            humidityField.visibility = View.INVISIBLE
+            luminosityText.visibility = View.INVISIBLE
+            luminosityField.visibility = View.INVISIBLE
         }
 
         viticultural.setOnClickListener {
@@ -146,6 +191,13 @@ class ProgramsActivity : AppCompatActivity() {
             programsDropDown.visibility = View.INVISIBLE
             triangleDown.visibility = View.INVISIBLE
             triangleRight.visibility = View.VISIBLE
+
+            temperatureText.visibility = View.INVISIBLE
+            temperatureField.visibility = View.INVISIBLE
+            humidityText.visibility = View.INVISIBLE
+            humidityField.visibility = View.INVISIBLE
+            luminosityText.visibility = View.INVISIBLE
+            luminosityField.visibility = View.INVISIBLE
         }
 
         custom.setOnClickListener {
@@ -154,6 +206,13 @@ class ProgramsActivity : AppCompatActivity() {
             programsDropDown.visibility = View.INVISIBLE
             triangleDown.visibility = View.INVISIBLE
             triangleRight.visibility = View.VISIBLE
+
+            temperatureText.visibility = View.VISIBLE
+            temperatureField.visibility = View.VISIBLE
+            humidityText.visibility = View.VISIBLE
+            humidityField.visibility = View.VISIBLE
+            luminosityText.visibility = View.VISIBLE
+            luminosityField.visibility = View.VISIBLE
         }
 
         addProgramButton.setOnClickListener {
@@ -161,13 +220,39 @@ class ProgramsActivity : AppCompatActivity() {
             val programName = programNameField.text.toString().trim()
             if (programName.isNotEmpty()) {
                 if(programTypeId != 0){
-                    val newProgram = ProgramItem(programTypeId, programName)
-                    programsManager.addProgram(newProgram) { updatedList ->
-                        adapter.updateList(updatedList)
-                        Toast.makeText(this, "Program added!", Toast.LENGTH_SHORT).show()
-                        addForm.visibility = View.GONE
-                        selectProgram.setText("Select Program")
-                        programNameField.setText("")
+                    if(programTypeId != 5){
+                        val newProgram = ProgramItem(programTypeId, programName)
+                        programsManager.addProgram(newProgram) { updatedList ->
+                            adapter.updateList(updatedList)
+                            Toast.makeText(this, "Program added!", Toast.LENGTH_SHORT).show()
+                            addForm.visibility = View.GONE
+                            selectProgram.setText("Select Program")
+                            programNameField.setText("")
+                        }
+                    }
+                    else{
+                        val temperature = (temperatureField.text.toString().trim()).toDouble()
+                        val humidity = (humidityField.text.toString().trim()).toDouble()
+                        val luminosity = (luminosityField.text.toString().trim()).toDouble()
+                        val newProgram = ProgramItem(programTypeId, programName, temperature, humidity, luminosity)
+                        programsManager.addProgram(newProgram) { updatedList ->
+                            adapter.updateList(updatedList)
+                            Toast.makeText(this, "Program added!", Toast.LENGTH_SHORT).show()
+                            addForm.visibility = View.GONE
+                            selectProgram.setText("Select Program")
+                            programNameField.setText("")
+
+                            temperatureText.visibility = View.INVISIBLE
+                            temperatureField.visibility = View.INVISIBLE
+                            humidityText.visibility = View.INVISIBLE
+                            humidityField.visibility = View.INVISIBLE
+                            luminosityText.visibility = View.INVISIBLE
+                            luminosityField.visibility = View.INVISIBLE
+
+                            temperatureField.setText("")
+                            humidityField.setText("")
+                            luminosityField.setText("")
+                        }
                     }
                 }
                 else{

@@ -22,7 +22,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class LoginActivity : AppCompatActivity()  {
 
-    private val BASE_URL = "http://10.0.2.2:8080";
+    private val BASE_URL = "http://10.0.2.2:8080"
+//    private val BASE_URL = "http://192.168.100.63:8080"
     private lateinit var emailInput: EditText
     private lateinit var passwordInput: EditText
     private lateinit var loginButton: Button
@@ -78,8 +79,8 @@ class LoginActivity : AppCompatActivity()  {
                         Log.d(TAG, "Login successful, User ID: $userId")
                         SharedPreferences.saveUserId(this@LoginActivity, userId)
                     }
-                    emailInput.setText("");
-                    passwordInput.setText("");
+                    emailInput.setText("")
+                    passwordInput.setText("")
                     startActivity(Intent(this@LoginActivity, EnvironmentsActivity::class.java))
                 } else {
                     val loginResponse = response.body()

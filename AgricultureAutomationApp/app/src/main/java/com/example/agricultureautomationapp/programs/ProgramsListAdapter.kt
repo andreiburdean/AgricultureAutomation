@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agricultureautomationapp.R
 import com.example.agricultureautomationapp.models.ProgramItem
-import com.example.agricultureautomationapp.sharedpreferences.SharedPreferences
 
 class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, private val programsManager: ProgramsManager, private val onItemClick: (ProgramItem) -> Unit) : RecyclerView.Adapter<ProgramsListAdapter.ProgramViewHolder>() {
 
@@ -38,7 +37,7 @@ class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, privat
         holder.programName.text = program.programName
         holder.optionsDropdown.visibility = View.GONE
         var programStatus = program.status
-        var programName = program.programName
+        var programTypeId = program.programTypeId
 
         if (program.status == 1) {
             holder.statusActive.visibility = View.VISIBLE
@@ -49,6 +48,7 @@ class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, privat
         }
 
         holder.optionsButton.setOnClickListener {
+            Log.d(null, "$programTypeId")
             if (holder.optionsDropdown.visibility == View.VISIBLE) {
                 holder.optionsDropdown.visibility = View.INVISIBLE
             } else {
@@ -62,7 +62,7 @@ class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, privat
                     holder.stop.visibility = View.GONE
                 }
 
-                if(programName == "Custom"){
+                if(programTypeId == 5){
                     holder.edit.visibility = View.VISIBLE
                 }else{
                     holder.edit.visibility = View.GONE

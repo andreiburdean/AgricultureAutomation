@@ -16,6 +16,7 @@ class EnvironmentsManager(private val context: Context) {
     private val environmentsList = mutableListOf<EnvironmentItem>()
 
     private val BASE_URL = "http://10.0.2.2:8080";
+//    private val BASE_URL = "http://192.168.100.63:8080";
 
     private fun getApiService(): EnvironmentApiService {
         val retrofit = Retrofit.Builder()

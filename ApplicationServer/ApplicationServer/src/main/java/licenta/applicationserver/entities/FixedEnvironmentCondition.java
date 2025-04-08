@@ -10,14 +10,18 @@ import lombok.Setter;
 @Table(name = "fixed_environment_conditions")
 public class FixedEnvironmentCondition {
 
-    //Primary Key
+    //Primary Key/ Foreign Key
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fixed_condition_id")
-    private Integer fixedConditionId;
-
-    //Foreign Key
-    @ManyToOne
+    @OneToOne(optional = false)
     @JoinColumn(name = "program_type_id", nullable = false)
-    private ProgramType programType;
+    private ProgramType programTypeId;
+
+    @Column(name = "temperature")
+    private Double temperature;
+
+    @Column(name = "humidity")
+    private Double humidity;
+
+    @Column(name = "luminosity")
+    private Double luminosity;
 }

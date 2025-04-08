@@ -5,7 +5,9 @@ import android.util.Log
 
 import com.example.agricultureautomationapp.apiservices.ProgramApiService
 import com.example.agricultureautomationapp.models.ProgramItem
+import com.example.agricultureautomationapp.models.ProgramItemDeserializer
 import com.example.agricultureautomationapp.sharedpreferences.SharedPreferences
+import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,6 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class ProgramsManager(private val context: Context) {
     private val programsList = mutableListOf<ProgramItem>()
     private val BASE_URL = "http://10.0.2.2:8080";
+//    private val BASE_URL = "http://192.168.100.63:8080";
 
     private fun getApiService(): ProgramApiService {
         val retrofit = Retrofit.Builder()
@@ -36,11 +39,11 @@ class ProgramsManager(private val context: Context) {
                 response: Response<List<ProgramItem>>
             ) {
                 if (response.isSuccessful) {
+
                     programsList.clear()
                     response.body()?.let {
                         programsList.addAll(it)
                     }
-                    Log.d("ProgramsManager", "Programs list: $programsList.")
                     onResult(programsList)
                 } else {
                     Log.d("ProgramsManager", "Error: ${response.code()}")
