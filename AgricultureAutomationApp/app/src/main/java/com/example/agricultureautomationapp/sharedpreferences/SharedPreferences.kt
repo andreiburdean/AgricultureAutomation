@@ -6,6 +6,7 @@ class SharedPreferences {
         private const val PREFS_NAME = "UserPrefs"
         private const val USER_ID_KEY = "user_id"
         private const val ENV_ID_KEY = "environment_id"
+        private const val ENV_NAME_KEY = "environment_name"
 
         fun saveUserId(context: Context, userId: Int) {
             val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -29,6 +30,18 @@ class SharedPreferences {
         fun getEnvironmentId(context: Context): Int {
             val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             return sharedPreferences.getInt(ENV_ID_KEY, 0)
+        }
+
+        fun saveEnvironmentName(context: Context, environmentName: String) {
+            val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putString(ENV_NAME_KEY, environmentName)
+            editor.apply()
+        }
+
+        fun getEnvironmentName(context: Context): String {
+            val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            return sharedPreferences.getString(ENV_NAME_KEY, "")!!
         }
     }
 }

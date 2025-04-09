@@ -5,9 +5,7 @@ import android.util.Log
 
 import com.example.agricultureautomationapp.apiservices.ProgramApiService
 import com.example.agricultureautomationapp.models.ProgramItem
-import com.example.agricultureautomationapp.models.ProgramItemDeserializer
 import com.example.agricultureautomationapp.sharedpreferences.SharedPreferences
-import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -78,6 +76,31 @@ class ProgramsManager(private val context: Context) {
             }
         })
     }
+
+    fun updateProgram(program: ProgramItem, onResult: (ProgramItem) -> Unit) {
+        val apiService = getApiService()
+        apiService.updateProgram(program.programId!!, program).enqueue(object : Callback<ProgramItem> {
+            override fun onResponse(call: Call<ProgramItem>, response: Response<ProgramItem>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { updatedPartial ->
+                        updatedPartial.temperature?.let { program.temperature = it }
+                        updatedPartial.humidity?.let { program.humidity = it }
+                        updatedPartial.luminosity?.let { program.luminosity = it }
+                        onResult(program)
+                    } ?: run {
+                        Log.e("ProgramsManager", "Response body is null")
+                    }
+                } else {
+                    Log.e("ProgramsManager", "Failed to update program: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ProgramItem>, t: Throwable) {
+                Log.e("ProgramsManager", "Error updating program: ${t.message}")
+            }
+        })
+    }
+
 
     fun deleteProgram(program: ProgramItem, onResult: (Boolean) -> Unit) {
         val apiService = getApiService()

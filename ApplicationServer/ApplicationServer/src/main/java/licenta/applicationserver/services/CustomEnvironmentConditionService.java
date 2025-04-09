@@ -1,8 +1,7 @@
 package licenta.applicationserver.services;
 
+import licenta.applicationserver.dtos.ProgramDTO;
 import licenta.applicationserver.entities.CustomEnvironmentCondition;
-import licenta.applicationserver.entities.Program;
-import licenta.applicationserver.repositories.CustomEnvironmentConditionRepository;
 import licenta.applicationserver.repositories.CustomEnvironmentConditionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,8 +15,21 @@ public class CustomEnvironmentConditionService {
         this.customRepository = customRepository;
     }
 
-    public CustomEnvironmentCondition addCustomCondition(CustomEnvironmentCondition customCondition) {
-        return customRepository.save(customCondition);
+    public void addCustomCondition(CustomEnvironmentCondition customCondition) {
+        customRepository.save(customCondition);
+    }
+
+    public ProgramDTO updateCustomEnvironmentConditionByProgramId(Double temperature, Double humidity, Double luminosity, Integer programId){
+        ProgramDTO returnProgram = new ProgramDTO();
+        if(customRepository.updateCustomEnvironmentConditionByProgramId(temperature, humidity, luminosity, programId) != 0){
+            CustomEnvironmentCondition tempCustomCondition = customRepository.getCustomEnvironmentConditionByProgramId(programId);
+
+            returnProgram.setTemperature(tempCustomCondition.getTemperature());
+            returnProgram.setHumidity(tempCustomCondition.getHumidity());
+            returnProgram.setLuminosity(tempCustomCondition.getLuminosity());
+        }
+
+        return returnProgram;
     }
 
     public void deleteCustomConditionByProgramId(Integer programId) {

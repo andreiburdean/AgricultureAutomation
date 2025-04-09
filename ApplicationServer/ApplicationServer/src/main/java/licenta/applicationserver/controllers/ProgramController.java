@@ -81,6 +81,12 @@ public class ProgramController {
         return programService.findProgramsByEnvironmentId(environmentId);
     }
 
+    @PutMapping("{programId}/update-program")
+    public ResponseEntity<ProgramDTO> updateCustomEnvironmentConditionByProgramId(@PathVariable Integer programId, @RequestBody ProgramDTO programDTO){
+        ProgramDTO responseEntity = customConditionService.updateCustomEnvironmentConditionByProgramId(programDTO.getTemperature(), programDTO.getHumidity(), programDTO.getLuminosity(), programId);
+        return new ResponseEntity<>(responseEntity, HttpStatus.OK);
+    }
+
     @DeleteMapping("{programId}/delete-program")
     public ResponseEntity<Void> deleteProgram(@PathVariable Integer programId) {
         if (programService.findProgramById(programId).isPresent()) {

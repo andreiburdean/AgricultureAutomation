@@ -49,6 +49,9 @@ class EnvironmentsActivity : AppCompatActivity() {
             selectedEnvironment.environmentId?.let { environmentId ->
                 SharedPreferences.saveEnvironmentId(this, environmentId)
             }
+            selectedEnvironment.environmentName.let { environmentName ->
+                SharedPreferences.saveEnvironmentName(this, environmentName)
+            }
             startActivity(intent)
         }
         recyclerView.adapter = adapter

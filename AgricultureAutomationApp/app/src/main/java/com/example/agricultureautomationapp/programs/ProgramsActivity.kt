@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agricultureautomationapp.R
 import com.example.agricultureautomationapp.models.ProgramItem
+import com.example.agricultureautomationapp.sharedpreferences.SharedPreferences
 
 class ProgramsActivity : AppCompatActivity() {
 
@@ -45,6 +46,7 @@ class ProgramsActivity : AppCompatActivity() {
     private lateinit var humidityField: EditText
     private lateinit var luminosityText: TextView
     private lateinit var luminosityField: EditText
+    private lateinit var environmentName: TextView
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +80,9 @@ class ProgramsActivity : AppCompatActivity() {
         humidityField = findViewById(R.id.humidity_field)
         luminosityText = findViewById(R.id.luminosity_text)
         luminosityField = findViewById(R.id.luminosity_field)
+        environmentName = findViewById(R.id.environment_text)
+
+        environmentName.text = SharedPreferences.getEnvironmentName(this)
 
         programsManager = ProgramsManager(this)
         recyclerView.layoutManager = LinearLayoutManager(this)

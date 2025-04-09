@@ -1,9 +1,5 @@
 Kotlin/Spring
 
-adaugare program custom cu posibilitatea de a alege/ seta parametrii/ kotlin + spring -> rpi5
-
-modificare program daca e custom/kotlin + spring
-
 control environment/kotlin + java -> rpi5
 
 transmis/ primit valorile de la senzori in aplicatie cu ws sau server-sent events / java + kotlin

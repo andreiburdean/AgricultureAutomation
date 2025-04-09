@@ -38,5 +38,6 @@
     <string name="temperature">Fan start temperature</string>
     <string name="humidity">Fan start humidity</string>
     <string name="luminosity">LED start luminosity</string>
+    <string name="edit_program">Edit Program</string>
 
 </resources>

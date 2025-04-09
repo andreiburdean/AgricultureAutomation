@@ -8,6 +8,8 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agricultureautomationapp.R
 import com.example.agricultureautomationapp.models.ProgramItem
@@ -98,8 +100,16 @@ class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, privat
         }
 
         holder.edit.setOnClickListener {
+            val dialog = ProgramFormDialog(
+                programId = program.programId!!,
+                initialTemperature = program.temperature ?: 0.0,
+                initialHumidity = program.humidity ?: 0.0,
+                initialLuminosity = program.luminosity ?: 0.0,
+                programsManager,
+                this
+            )
+            dialog.show((holder.itemView.context as AppCompatActivity).supportFragmentManager, "ProgramForm")
             holder.optionsDropdown.visibility = View.GONE
-            holder.optionsDropdown.requestLayout()
         }
 
         holder.delete.setOnClickListener {
@@ -124,6 +134,16 @@ class ProgramsListAdapter(private var programs: MutableList<ProgramItem>, privat
         programs.clear()
         programs.addAll(newPrograms)
         notifyDataSetChanged()
+    }
+
+    fun updateCustomEnvItem(updatedProgram: ProgramItem) {
+        val index = programs.indexOfFirst { it.programId == updatedProgram.programId }
+        if (index != -1) {
+            programs[index].temperature = updatedProgram.temperature
+            programs[index].humidity = updatedProgram.humidity
+            programs[index].luminosity = updatedProgram.luminosity
+            notifyItemChanged(index)
+        }
     }
 
     fun removeItem(program: ProgramItem) {

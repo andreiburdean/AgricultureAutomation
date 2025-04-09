@@ -6,6 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ProgramApiService {
@@ -14,6 +15,9 @@ interface ProgramApiService {
 
     @POST("/api/program/{environmentId}/add-program")
     fun addProgram(@Path("environmentId") environmentId: Int, @Body program: ProgramItem): Call<ProgramItem>
+
+    @PUT("/api/program/{programId}/update-program")
+    fun updateProgram(@Path("programId") programId: Int, @Body program: ProgramItem): Call<ProgramItem>
 
     @DELETE("/api/program/{programId}/delete-program")
     fun deleteProgram(@Path("programId") programId: Int): Call<Void>
