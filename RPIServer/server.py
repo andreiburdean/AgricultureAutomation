@@ -1,9 +1,9 @@
 import aiohttp
-import request_handlers
 from aiohttp import web
 from request_handlers import *
 from actuators import *
-
+import asyncio
+from data_maps import *
 
 async def actuator_controller():
     while True:
@@ -16,6 +16,8 @@ async def actuator_controller():
 async def server():
     app = web.Application()
     app.router.add_post('/receive-sensor-data', handle_sensor_data_receive)
+    app.router.add_post('/receive-control-command', handle_control_command)
+    app.router.add_post('/receive-custom-program', handle_modify_custom_program)
 
     runner = web.AppRunner(app)
     await runner.setup()

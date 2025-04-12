@@ -11,6 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -84,6 +91,24 @@ public class ProgramController {
     @PutMapping("{programId}/update-program")
     public ResponseEntity<ProgramDTO> updateCustomEnvironmentConditionByProgramId(@PathVariable Integer programId, @RequestBody ProgramDTO programDTO){
         ProgramDTO responseEntity = customConditionService.updateCustomEnvironmentConditionByProgramId(programDTO.getTemperature(), programDTO.getHumidity(), programDTO.getLuminosity(), programId);
+
+        if (responseEntity != null) {
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                String payload = objectMapper.writeValueAsString(responseEntity);
+                HttpEntity<String> requestEntity = new HttpEntity<>(payload, headers);
+
+                String rpiServerUrl = "http://192.168.1.131:5000/receive-custom-program";
+                ResponseEntity<String> rpiResponse = restTemplate.postForEntity(rpiServerUrl, requestEntity, String.class);
+                System.out.println("Response from RPi5: " + rpiResponse.getBody());
+            } catch (Exception e) {
+                System.err.println("Error sending POST request to RPi5 server: " + e.getMessage());
+            }
+        }
         return new ResponseEntity<>(responseEntity, HttpStatus.OK);
     }
 

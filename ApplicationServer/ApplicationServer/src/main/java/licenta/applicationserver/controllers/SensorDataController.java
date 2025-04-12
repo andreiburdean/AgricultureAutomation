@@ -26,7 +26,7 @@ public class SensorDataController {
     }
 
     @PostMapping("/receive-sensor-data")
-    public ResponseEntity<Integer> testRaspberryComRec(@RequestBody Map<String, Double> sensorData) {
+    public ResponseEntity<Integer> receiveSensorData(@RequestBody Map<String, Double> sensorData) {
         System.out.println("Received sensor data:" + sensorData);
         sensorDataMap.put("temperature", sensorData.get("temperature"));
         sensorDataMap.put("humidity", sensorData.get("humidity"));

@@ -4,7 +4,7 @@ import digitalio
 import board
 import adafruit_character_lcd.character_lcd as characterlcd
 from time import sleep
-from request_handlers import sensor_data_map
+from data_maps import *
 
 """pin control relay"""
 pump_relay = DigitalOutputDevice(17)
@@ -56,26 +56,47 @@ def stop_fan():
 
 
 def pump_control_logic():
-    if sensor_data_map["soilMoisture"] == 1:
-        start_pump()
+    if manual_control_map["switch_control"] == 0:
+        if sensor_data_map["soilMoisture"] == sensor_control_map["soilMoisture"]:
+            start_pump()
+        else:
+            stop_pump()
     else:
-        stop_pump()
+        if manual_control_map["pump"] == 0:
+            stop_pump()
+        else:
+            start_pump()
 
 
 def fan_control_logic():
-    if sensor_data_map["temperature"] > 35 or sensor_data_map["humidity"] > 80:
-        start_fan()
+    if manual_control_map["switch_control"] == 0:
+        if sensor_data_map["temperature"] > sensor_control_map["temperature"] or sensor_data_map["humidity"] > \
+                sensor_control_map["humidity"]:
+            start_fan()
+        else:
+            stop_fan()
     else:
-        stop_fan()
+        if manual_control_map["fan"] == 0:
+            stop_fan()
+        else:
+            start_fan()
 
 
 def led_control_logic():
-    if sensor_data_map["luminosity"] > 5:
-        pwm_blue.value = 0
-        pwm_red.value = 0
+    if manual_control_map["switch_control"] == 0:
+        if sensor_data_map["luminosity"] > sensor_control_map["luminosity"]:
+            pwm_blue.value = 0
+            pwm_red.value = 0
+        else:
+            pwm_blue.value = 1 - sensor_data_map["luminosity"] / sensor_control_map["luminosity"]
+            pwm_red.value = 1 - sensor_data_map["luminosity"] / sensor_control_map["luminosity"]
     else:
-        pwm_blue.value = 1 - sensor_data_map["luminosity"] / 5
-        pwm_red.value = 1 - sensor_data_map["luminosity"] / 5
+        if manual_control_map["led"] == 0:
+            pwm_blue.value = 0
+            pwm_red.value = 0
+        else:
+            pwm_blue.value = 1 - sensor_data_map["luminosity"] / sensor_control_map["luminosity"]
+            pwm_red.value = 1 - sensor_data_map["luminosity"] / sensor_control_map["luminosity"]
 
 
 def lcd_control_logic():

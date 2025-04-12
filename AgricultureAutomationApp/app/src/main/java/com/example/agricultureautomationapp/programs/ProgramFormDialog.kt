@@ -50,9 +50,12 @@ class ProgramFormDialog(
                 luminosity = newLuminosity
             )
 
+            val act = activity
             programsManager.updateProgram(program) { updatedProgram ->
                 listAdapter.updateCustomEnvItem(updatedProgram)
-                Toast.makeText(context, "Program updated!", Toast.LENGTH_SHORT).show()
+                act?.let {
+                    Toast.makeText(it, "Program updated!", Toast.LENGTH_SHORT).show()
+                }
             }
 
             dismiss()
