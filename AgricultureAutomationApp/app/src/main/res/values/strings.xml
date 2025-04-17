@@ -19,6 +19,7 @@
     <string name="raspberry_id">Raspberry Id</string>
     <string name="raspberry_ip">Raspberry IP Address</string>
     <string name="add_environment">Add Environment</string>
+    <string name="monitor">Monitor</string>
 
     <!--  Programs  -->
     <string name="add_program">Add Program</string>
@@ -35,9 +36,18 @@
     <string name="stop">Stop</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
-    <string name="temperature">Fan start temperature</string>
-    <string name="humidity">Fan start humidity</string>
-    <string name="luminosity">LED start luminosity</string>
+    <string name="fan_start_temperature">Fan start temperature</string>
+    <string name="fan_start_humidity">Fan start humidity</string>
+    <string name="led_start_luminosity">LED start luminosity</string>
     <string name="edit_program">Edit Program</string>
+    <string name="temperature">Temperature</string>
+    <string name="humidity">Air Humidity</string>
+    <string name="light">Light Intensity</string>
+    <string name="pressure">Air Pressure</string>
+    <string name="moisture">Moist Soil</string>
+    <string name="sample_number">23</string>
+    <string name="control_fan">Control Fan</string>
+    <string name="control_pump">Control Pump</string>
+    <string name="control_led">Control LED</string>
 
 </resources>

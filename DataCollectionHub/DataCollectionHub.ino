@@ -22,17 +22,17 @@ Adafruit_MPL3115A2 baro;
 // WebsocketsClient client;
 
 //WIFI setup
-// const char* ssid     = "DIGI-22tb";
-// const char* password = "qGj6e94d";
-const String ssid     = "DIGI-hdP9";
-const String password = "xaM3ApJwYu";
+const String ssid     = "DIGI-22tb";
+const String password = "qGj6e94d";
+// const String ssid     = "DIGI-hdP9";
+// const String password = "xaM3ApJwYu";
 
 //endpoint setup
-// const char* serverHost = "192.168.100.137";
-const String serverHost = "192.168.1.131";
+const String serverHost = "192.168.100.137";
+// const String serverHost = "192.168.1.131";
 const int serverPort = 5000;
-// const char* serverPathWS = "/ws";
-// const char* serverURL = "http://192.168.1.130:5000/receive-sensor-data";
+// const String serverPathWS = "/ws";
+// const String serverURL = "http://" + serverHost + ":" + serverPort + "/receive-sensor-data";
 const String serverURL = "http://" + serverHost + ":" + serverPort + "/receive-sensor-data";
 
 

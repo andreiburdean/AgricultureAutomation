@@ -101,7 +101,6 @@ class ProgramsManager(private val context: Context) {
         })
     }
 
-
     fun deleteProgram(program: ProgramItem, onResult: (Boolean) -> Unit) {
         val apiService = getApiService()
         val call = apiService.deleteProgram(program.programId!!)
@@ -133,6 +132,7 @@ class ProgramsManager(private val context: Context) {
         call.enqueue(object : Callback<Boolean> {
             override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
                 if (response.isSuccessful) {
+                    Log.e("ProgramsManager", "${response.body()}")
                     onResult(response.body() ?: true)
                 } else {
                     Log.e("ProgramsManager", "Failed to start program: ${response.code()}")
@@ -154,6 +154,7 @@ class ProgramsManager(private val context: Context) {
         call.enqueue(object : Callback<Boolean> {
             override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
                 if (response.isSuccessful) {
+                    Log.e("ProgramsManager", "${response.body()}")
                     onResult(response.body() ?: true)
                 } else {
                     Log.e("ProgramsManager", "Failed to start program: ${response.code()}")

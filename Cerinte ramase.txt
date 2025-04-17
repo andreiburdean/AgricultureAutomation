@@ -4,6 +4,4 @@ control environment/kotlin + java -> rpi5 partial facut
 
 transmis/ primit valorile de la senzori in aplicatie cu ws sau server-sent events / java + kotlin
 
-comunicare valori stocate in bd si rpi id intre server si rpi/ spring si rpi5
-
 comparatie valori senzori/ prognoza meteo/ spring (chiar la final)

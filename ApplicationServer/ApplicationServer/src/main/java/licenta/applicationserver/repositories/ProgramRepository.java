@@ -19,6 +19,9 @@ public interface ProgramRepository extends JpaRepository<Program, Integer> {
     @Query("SELECT p FROM Program p WHERE p.environment.environmentId = :environmentId")
     Optional<List<Program>> findProgramsByEnvironmentId(@Param("environmentId") Integer environmentId);
 
+    @Query("SELECT p FROM Program p WHERE p.environment.environmentId = :environmentId AND p.status = 1")
+    Optional<Program> findActiveProgramByEnvironmentId(@Param("environmentId") Integer environmentId);
+
     @Modifying
     @Transactional
     @Query("UPDATE Program p SET p.status = 0 WHERE p.environment.environmentId = :environmentId")

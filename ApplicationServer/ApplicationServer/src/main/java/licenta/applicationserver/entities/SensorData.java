@@ -7,16 +7,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "fixed_environment_conditions")
-public class FixedEnvironmentCondition {
-
+@Table(name = "sensor_data")
+public class SensorData {
     @Id
-    private Integer programTypeId;
+    private Integer environmentId;
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "program_type_id", nullable = false)
-    private ProgramType programType;
+    @JoinColumn(name = "environment_id", nullable = false)
+    private Environment environment;
 
     @Column(name = "temperature")
     private Double temperature;
@@ -26,4 +25,10 @@ public class FixedEnvironmentCondition {
 
     @Column(name = "luminosity")
     private Double luminosity;
+
+    @Column(name = "pressure")
+    private Double pressure;
+
+    @Column(name = "soil_moisture")
+    private Double soilMoisture;
 }

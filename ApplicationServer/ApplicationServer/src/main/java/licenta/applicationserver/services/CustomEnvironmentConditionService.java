@@ -35,5 +35,4 @@ public class CustomEnvironmentConditionService {
     public void deleteCustomConditionByProgramId(Integer programId) {
         customRepository.deleteByProgramId(programId);
     }
-
 }

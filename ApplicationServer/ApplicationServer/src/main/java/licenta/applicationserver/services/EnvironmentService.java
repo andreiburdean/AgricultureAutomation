@@ -32,6 +32,11 @@ public class EnvironmentService {
         return optionalEnvironment.orElse(null);
     }
 
+    public Environment findEnvironmentByRaspberryId(Integer raspberryId) {
+        Optional<Environment> optionalEnvironment = environmentRepository.findEnvironmentByRaspberryId(raspberryId);
+        return optionalEnvironment.orElse(null);
+    }
+
     public ResponseEntity<List<Environment>> findEnvironmentsByUserId(Integer userId){
         Optional<List<Environment>> environments = environmentRepository.findEnvironmentsByUserId(userId);
 

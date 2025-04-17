@@ -13,5 +13,8 @@ import java.util.Optional;
 public interface EnvironmentRepository extends JpaRepository<Environment, Integer> {
     @Query("SELECT e FROM Environment e WHERE e.user.userId = :userId")
     Optional<List<Environment>> findEnvironmentsByUserId(@Param("userId") Integer userId);
+
+    @Query("SELECT e FROM Environment e WHERE e.raspberryId = :raspberryId")
+    Optional<Environment> findEnvironmentByRaspberryId(@Param("raspberryId") Integer raspberryId);
 }
 

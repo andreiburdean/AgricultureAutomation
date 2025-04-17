@@ -1,3 +1,5 @@
+RASPBERRY_ID: int = 1
+
 sensor_data_map = {
     "temperature": 0,
     "humidity": 0,
@@ -7,10 +9,11 @@ sensor_data_map = {
 }
 
 sensor_control_map = {
-    "temperature": 35,
-    "humidity": 80,
-    "luminosity": 2.5,
-    "soilMoisture": 1
+    "succesful_server_startup_response": 0,
+    "temperature": 0,
+    "humidity": 0,
+    "luminosity": 0,
+    "soilMoisture": 0
 }
 
 manual_control_map = {

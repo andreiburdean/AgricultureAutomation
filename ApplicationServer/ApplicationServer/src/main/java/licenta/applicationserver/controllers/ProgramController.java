@@ -1,10 +1,8 @@
 package licenta.applicationserver.controllers;
 
+import licenta.applicationserver.dtos.ConditionsDTO;
 import licenta.applicationserver.dtos.ProgramDTO;
-import licenta.applicationserver.entities.CustomEnvironmentCondition;
-import licenta.applicationserver.entities.Environment;
-import licenta.applicationserver.entities.Program;
-import licenta.applicationserver.entities.ProgramType;
+import licenta.applicationserver.entities.*;
 import licenta.applicationserver.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,12 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RestController
@@ -27,16 +24,17 @@ import java.util.List;
 public class ProgramController {
 
     private final ProgramService programService;
-
     private final CustomEnvironmentConditionService customConditionService;
     private final EnvironmentService environmentService;
+    private final RaspberryRESTService rpiService;
     private final ProgramTypeService programTypeService;
 
     @Autowired
-    public ProgramController(ProgramService programService, CustomEnvironmentConditionService customConditionService, EnvironmentService environmentService, ProgramTypeService programTypeService) {
+    public ProgramController(ProgramService programService, CustomEnvironmentConditionService customConditionService, EnvironmentService environmentService, RaspberryRESTService rpiService, ProgramTypeService programTypeService) {
         this.programService = programService;
         this.customConditionService = customConditionService;
         this.environmentService = environmentService;
+        this.rpiService = rpiService;
         this.programTypeService = programTypeService;
     }
 
@@ -102,20 +100,24 @@ public class ProgramController {
                 String payload = objectMapper.writeValueAsString(responseEntity);
                 HttpEntity<String> requestEntity = new HttpEntity<>(payload, headers);
 
-                String rpiServerUrl = "http://192.168.1.131:5000/receive-custom-program";
+                String rpiServerUrl = "http://192.168.100.137:5000/receive-custom-program";
                 ResponseEntity<String> rpiResponse = restTemplate.postForEntity(rpiServerUrl, requestEntity, String.class);
                 System.out.println("Response from RPi5: " + rpiResponse.getBody());
             } catch (Exception e) {
                 System.err.println("Error sending POST request to RPi5 server: " + e.getMessage());
             }
         }
+        assert responseEntity != null;
         return new ResponseEntity<>(responseEntity, HttpStatus.OK);
     }
 
     @DeleteMapping("{programId}/delete-program")
     public ResponseEntity<Void> deleteProgram(@PathVariable Integer programId) {
         if (programService.findProgramById(programId).isPresent()) {
-            customConditionService.deleteCustomConditionByProgramId(programId);
+            Program program = programService.findProgramById(programId).get();
+            if(program.getProgramType().getProgramTypeId() == 5){
+                customConditionService.deleteCustomConditionByProgramId(programId);
+            }
             programService.deleteProgram(programId);
             return ResponseEntity.noContent().build();
         } else {
@@ -125,25 +127,55 @@ public class ProgramController {
 
     @PostMapping("{environmentId}/{programId}/start-program")
     public ResponseEntity<Boolean> startProgram(@PathVariable Integer environmentId, @PathVariable Integer programId) {
-        if(programService.stopPrograms(environmentId) != 0){
-            if(programService.startProgram(programId) != 0){
-                return new ResponseEntity<>(true, HttpStatus.OK);
-            }
-            else{
-                return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+        System.out.println("start program");
+
+        boolean dbResult = false;
+        if(programService.stopPrograms(environmentId) != 0) {
+            if(programService.startProgram(programId) != 0) {
+                dbResult = true;
             }
         }
-        else{
+
+        if (dbResult) {
+            Optional<Program> program = programService.findProgramById(programId);
+            if(program.isPresent()){
+                if(program.get().getProgramType().getProgramTypeId() != 5){
+                    FixedEnvironmentCondition fixedEnvironment = rpiService.getFixedEnvironmentConditionByProgramTypeId(program.get().getProgramType().getProgramTypeId());
+                    ConditionsDTO conditionsDTO = new ConditionsDTO(
+                            fixedEnvironment.getTemperature(),
+                            fixedEnvironment.getHumidity(),
+                            fixedEnvironment.getLuminosity());
+
+                    rpiService.sendStartPostToRPi5(conditionsDTO);
+                }
+                else{
+                    CustomEnvironmentCondition customEnvironment = rpiService.getCustomEnvironmentConditionByProgramId(program.get().getProgramId());
+                    ConditionsDTO conditionsDTO = new ConditionsDTO(
+                            customEnvironment.getTemperature(),
+                            customEnvironment.getHumidity(),
+                            customEnvironment.getLuminosity());
+
+                    rpiService.sendStartPostToRPi5(conditionsDTO);
+                }
+            }
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        } else {
             return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("{programId}/stop-program")
     public ResponseEntity<Boolean> stopProgram(@PathVariable Integer programId) {
-        if(programService.stopProgram(programId) != 0){
+        System.out.println("stop program");
+        Integer result = programService.stopProgram(programId);
+        if(result != 0) {
+            try {
+                rpiService.sendStopPostToRPi5();
+            } catch(Exception e) {
+                System.err.println("Error calling RPi5Service: " + e.getMessage());
+            }
             return new ResponseEntity<>(true, HttpStatus.OK);
-        }
-        else{
+        } else {
             return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

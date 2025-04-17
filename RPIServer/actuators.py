@@ -30,34 +30,28 @@ lcd_d7 = digitalio.DigitalInOut(board.D21)
 lcd = characterlcd.Character_LCD_Mono(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows)
 lcd.clear()
 
-
 def exit_handler():
     stop_pump()
     stop_fan()
     pwm_blue.off()
     pwm_red.off()
     lcd.clear()
-
-
+    
 def start_pump():
     pump_relay.off()
-
-
+    
 def stop_pump():
     pump_relay.on()
-
-
+    
 def start_fan():
     fan_relay.off()
-
-
+    
 def stop_fan():
     fan_relay.on()
-
-
+    
 def pump_control_logic():
     if manual_control_map["switch_control"] == 0:
-        if sensor_data_map["soilMoisture"] == sensor_control_map["soilMoisture"]:
+        if sensor_data_map["soilMoisture"] != sensor_control_map["soilMoisture"]:
             start_pump()
         else:
             stop_pump()
@@ -66,12 +60,10 @@ def pump_control_logic():
             stop_pump()
         else:
             start_pump()
-
-
+            
 def fan_control_logic():
     if manual_control_map["switch_control"] == 0:
-        if sensor_data_map["temperature"] > sensor_control_map["temperature"] or sensor_data_map["humidity"] > \
-                sensor_control_map["humidity"]:
+        if sensor_data_map["temperature"] > sensor_control_map["temperature"] or sensor_data_map["humidity"] > sensor_control_map["humidity"]:
             start_fan()
         else:
             stop_fan()
@@ -80,8 +72,7 @@ def fan_control_logic():
             stop_fan()
         else:
             start_fan()
-
-
+        
 def led_control_logic():
     if manual_control_map["switch_control"] == 0:
         if sensor_data_map["luminosity"] > sensor_control_map["luminosity"]:
@@ -97,10 +88,22 @@ def led_control_logic():
         else:
             pwm_blue.value = 1 - sensor_data_map["luminosity"] / sensor_control_map["luminosity"]
             pwm_red.value = 1 - sensor_data_map["luminosity"] / sensor_control_map["luminosity"]
-
-
+        
 def lcd_control_logic():
-    lcd.message = str(round(sensor_data_map["temperature"], 1)) + "C, Hum: " + str(
-        round(sensor_data_map["humidity"], 1)) + "% "
-    lcd.cursor_position(0, 1)
+    lcd.message = str(round(sensor_data_map["temperature"], 1)) + "C, Hum: " + str(round(sensor_data_map["humidity"], 1)) + "% "
+    lcd.cursor_position(0,1)
     lcd.message = "Lum:" + str(round(sensor_data_map["luminosity"] / 5, 1)) + " " + str(sensor_data_map["soilMoisture"])
+    
+def environment_control_logic():
+    if sensor_control_map["succesful_server_startup_response"] == 0:
+        stop_pump()
+        stop_fan()
+        pwm_blue.off()
+        pwm_red.off()
+        lcd.clear()
+    else:
+        pump_control_logic()
+        fan_control_logic()
+        led_control_logic()
+        lcd_control_logic()
+        

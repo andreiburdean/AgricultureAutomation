@@ -1,6 +1,7 @@
 package com.example.agricultureautomationapp.programs
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -15,7 +16,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agricultureautomationapp.R
+import com.example.agricultureautomationapp.customviews.SlidingToggleButton
 import com.example.agricultureautomationapp.models.ProgramItem
+import com.example.agricultureautomationapp.monitor.MonitorActivity
 import com.example.agricultureautomationapp.sharedpreferences.SharedPreferences
 
 class ProgramsActivity : AppCompatActivity() {
@@ -30,6 +33,7 @@ class ProgramsActivity : AppCompatActivity() {
     private lateinit var environmentOptionsLayout: LinearLayout
     private lateinit var addButton: Button
     private lateinit var controlButton: Button
+    private lateinit var monitorButton: Button
     private lateinit var selectProgram: TextView
     private lateinit var programsDropDown: LinearLayout
     private lateinit var triangleRight: ImageView
@@ -47,10 +51,15 @@ class ProgramsActivity : AppCompatActivity() {
     private lateinit var luminosityText: TextView
     private lateinit var luminosityField: EditText
     private lateinit var environmentName: TextView
+    private lateinit var controlForm: View
+    private lateinit var controlCloseButton: ImageButton
+    private lateinit var pump: View
+    private lateinit var fan: View
+    private lateinit var led: View
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
-        var programTypeId: Int = 0
+        var programTypeId = 0
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.programs_activity)
@@ -63,7 +72,8 @@ class ProgramsActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.programs_recycler)
         environmentOptionsLayout = findViewById(R.id.environment_options_dropdown)
         addButton = findViewById(R.id.add)
-        controlButton = findViewById(R.id.control)
+        controlButton = findViewById(R.id.control_option)
+        monitorButton = findViewById(R.id.monitor)
         selectProgram = findViewById(R.id.select_program)
         programsDropDown = findViewById(R.id.programs_dropdown)
         triangleRight = findViewById(R.id.triangle_right)
@@ -81,6 +91,11 @@ class ProgramsActivity : AppCompatActivity() {
         luminosityText = findViewById(R.id.luminosity_text)
         luminosityField = findViewById(R.id.luminosity_field)
         environmentName = findViewById(R.id.environment_text)
+        controlForm = findViewById(R.id.control_form)
+        controlCloseButton = findViewById(R.id.close_button_control)
+        pump = findViewById(R.id.pump)
+        fan = findViewById(R.id.fan)
+        led = findViewById(R.id.led)
 
         environmentName.text = SharedPreferences.getEnvironmentName(this)
 
@@ -89,6 +104,37 @@ class ProgramsActivity : AppCompatActivity() {
         adapter = ProgramsListAdapter(mutableListOf(), programsManager) { selectedProgram -> environmentOptionsLayout.visibility = View.GONE}
 
         recyclerView.adapter = adapter
+
+        val slidingToggleControl = findViewById<SlidingToggleButton>(R.id.sliding_toggle_control)
+        slidingToggleControl.onToggleChangedListener = { isOn ->
+            if (isOn) {
+                pump.visibility = View.VISIBLE
+                fan.visibility = View.VISIBLE
+                led.visibility = View.VISIBLE
+            } else {
+                pump.visibility = View.GONE
+                fan.visibility = View.GONE
+                led.visibility = View.GONE
+            }
+        }
+
+        val slidingTogglePump = findViewById<SlidingToggleButton>(R.id.sliding_toggle_pump)
+        slidingTogglePump.onToggleChangedListener = { isOn ->
+            Toast.makeText(this, "Toggle is now ${if (isOn) "ON" else "OFF"}", Toast.LENGTH_SHORT)
+                .show()
+        }
+
+        val slidingToggleFan = findViewById<SlidingToggleButton>(R.id.sliding_toggle_fan)
+        slidingToggleFan.onToggleChangedListener = { isOn ->
+            Toast.makeText(this, "Toggle is now ${if (isOn) "ON" else "OFF"}", Toast.LENGTH_SHORT)
+                .show()
+        }
+
+        val slidingToggleLed = findViewById<SlidingToggleButton>(R.id.sliding_toggle_led)
+        slidingToggleLed.onToggleChangedListener = { isOn ->
+            Toast.makeText(this, "Toggle is now ${if (isOn) "ON" else "OFF"}", Toast.LENGTH_SHORT)
+                .show()
+        }
 
         upperBarDropDownButton.setOnClickListener {
             if(environmentOptionsLayout.visibility == View.VISIBLE){
@@ -106,6 +152,20 @@ class ProgramsActivity : AppCompatActivity() {
             if(environmentOptionsLayout.visibility == View.VISIBLE){
                 environmentOptionsLayout.visibility = View.GONE
                 addForm.visibility = View.VISIBLE
+            }
+        }
+
+        controlButton.setOnClickListener {
+            if(environmentOptionsLayout.visibility == View.VISIBLE){
+                environmentOptionsLayout.visibility = View.GONE
+                controlForm.visibility = View.VISIBLE
+            }
+        }
+
+        monitorButton.setOnClickListener {
+            if(environmentOptionsLayout.visibility == View.VISIBLE){
+                environmentOptionsLayout.visibility = View.GONE
+                startActivity(Intent(this@ProgramsActivity, MonitorActivity::class.java))
             }
         }
 
@@ -127,9 +187,9 @@ class ProgramsActivity : AppCompatActivity() {
             }
         }
 
-        controlButton.setOnClickListener {
-            if(environmentOptionsLayout.visibility == View.VISIBLE){
-                environmentOptionsLayout.visibility = View.GONE
+        controlCloseButton.setOnClickListener{
+            if(controlForm.visibility == View.VISIBLE){
+                controlForm.visibility = View.GONE
             }
         }
 
