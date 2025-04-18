@@ -89,7 +89,7 @@ public class ProgramController {
     @PutMapping("{programId}/update-program")
     public ResponseEntity<ProgramDTO> updateCustomEnvironmentConditionByProgramId(@PathVariable Integer programId, @RequestBody ProgramDTO programDTO){
         ProgramDTO responseEntity = customConditionService.updateCustomEnvironmentConditionByProgramId(programDTO.getTemperature(), programDTO.getHumidity(), programDTO.getLuminosity(), programId);
-
+        Optional<Program> program = programService.findProgramById(programId);
         if (responseEntity != null) {
             try {
                 RestTemplate restTemplate = new RestTemplate();
@@ -100,9 +100,12 @@ public class ProgramController {
                 String payload = objectMapper.writeValueAsString(responseEntity);
                 HttpEntity<String> requestEntity = new HttpEntity<>(payload, headers);
 
-                String rpiServerUrl = "http://192.168.100.137:5000/receive-custom-program";
-                ResponseEntity<String> rpiResponse = restTemplate.postForEntity(rpiServerUrl, requestEntity, String.class);
-                System.out.println("Response from RPi5: " + rpiResponse.getBody());
+                if(program.isPresent()){
+                    Integer raspberryId = program.get().getEnvironment().getRaspberryId();
+                    String rpiServerUrl = "http://192.168.100.137:5000/"+ raspberryId + "/receive-custom-program";
+                    ResponseEntity<String> rpiResponse = restTemplate.postForEntity(rpiServerUrl, requestEntity, String.class);
+                    System.out.println("Response from RPi5: " + rpiResponse.getBody());
+                }
             } catch (Exception e) {
                 System.err.println("Error sending POST request to RPi5 server: " + e.getMessage());
             }
@@ -118,6 +121,7 @@ public class ProgramController {
             if(program.getProgramType().getProgramTypeId() == 5){
                 customConditionService.deleteCustomConditionByProgramId(programId);
             }
+            rpiService.sendStopPostToRPi5(program.getEnvironment().getRaspberryId());
             programService.deleteProgram(programId);
             return ResponseEntity.noContent().build();
         } else {
@@ -141,21 +145,23 @@ public class ProgramController {
             if(program.isPresent()){
                 if(program.get().getProgramType().getProgramTypeId() != 5){
                     FixedEnvironmentCondition fixedEnvironment = rpiService.getFixedEnvironmentConditionByProgramTypeId(program.get().getProgramType().getProgramTypeId());
+                    Integer raspberryId = program.get().getEnvironment().getRaspberryId();
                     ConditionsDTO conditionsDTO = new ConditionsDTO(
                             fixedEnvironment.getTemperature(),
                             fixedEnvironment.getHumidity(),
                             fixedEnvironment.getLuminosity());
 
-                    rpiService.sendStartPostToRPi5(conditionsDTO);
+                    rpiService.sendStartPostToRPi5(conditionsDTO, raspberryId);
                 }
                 else{
                     CustomEnvironmentCondition customEnvironment = rpiService.getCustomEnvironmentConditionByProgramId(program.get().getProgramId());
+                    Integer raspberryId = program.get().getEnvironment().getRaspberryId();
                     ConditionsDTO conditionsDTO = new ConditionsDTO(
                             customEnvironment.getTemperature(),
                             customEnvironment.getHumidity(),
                             customEnvironment.getLuminosity());
 
-                    rpiService.sendStartPostToRPi5(conditionsDTO);
+                    rpiService.sendStartPostToRPi5(conditionsDTO, raspberryId);
                 }
             }
             return new ResponseEntity<>(true, HttpStatus.OK);
@@ -168,9 +174,10 @@ public class ProgramController {
     public ResponseEntity<Boolean> stopProgram(@PathVariable Integer programId) {
         System.out.println("stop program");
         Integer result = programService.stopProgram(programId);
+        Optional<Program> program = programService.findProgramById(programId);
         if(result != 0) {
             try {
-                rpiService.sendStopPostToRPi5();
+                program.ifPresent(value -> rpiService.sendStopPostToRPi5(value.getEnvironment().getRaspberryId()));
             } catch(Exception e) {
                 System.err.println("Error calling RPi5Service: " + e.getMessage());
             }

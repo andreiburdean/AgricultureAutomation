@@ -1,13 +1,16 @@
 package licenta.applicationserver.services;
 
+import licenta.applicationserver.dtos.ConditionsDTO;
+import licenta.applicationserver.dtos.ControlDTO;
 import licenta.applicationserver.entities.User;
 import licenta.applicationserver.security.PasswordHasher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import licenta.applicationserver.entities.Environment;
 import licenta.applicationserver.repositories.EnvironmentRepository;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
@@ -49,5 +52,22 @@ public class EnvironmentService {
 
     public void deleteEnvironment(Integer environmentId) {
         environmentRepository.deleteById(environmentId);
+    }
+
+    @Async
+    public void sendControlPostToRPi5(ControlDTO controlDTO, Integer raspberryId) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<ControlDTO> requestEntity = new HttpEntity<>(controlDTO, headers);
+            String rpiServerUrl = "http://192.168.100.137:5000/" + raspberryId + "/receive-control-command";
+
+            ResponseEntity<String> rpiResponse = restTemplate.postForEntity(rpiServerUrl, requestEntity, String.class);
+            System.out.println("Response from RPi5: " + rpiResponse.getBody());
+        } catch (Exception e) {
+            System.err.println("Error sending POST request to RPi5 server: " + e.getMessage());
+        }
     }
 }

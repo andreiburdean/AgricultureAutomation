@@ -54,14 +54,14 @@ public class RaspberryRESTService {
     }
 
     @Async
-    public void sendStartPostToRPi5(ConditionsDTO conditionsDTO) {
+    public void sendStartPostToRPi5(ConditionsDTO conditionsDTO, Integer raspberryId) {
         try {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             HttpEntity<ConditionsDTO> requestEntity = new HttpEntity<>(conditionsDTO, headers);
-            String rpiServerUrl = "http://192.168.100.137:5000/receive-program-start";
+            String rpiServerUrl = "http://192.168.100.137:5000/" + raspberryId + "/receive-program-start";
 
             ResponseEntity<String> rpiResponse = restTemplate.postForEntity(rpiServerUrl, requestEntity, String.class);
             System.out.println("Response from RPi5: " + rpiResponse.getBody());
@@ -71,7 +71,7 @@ public class RaspberryRESTService {
     }
 
     @Async
-    public void sendStopPostToRPi5() {
+    public void sendStopPostToRPi5(Integer raspberryId) {
         try {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
@@ -81,7 +81,7 @@ public class RaspberryRESTService {
             String payload = objectMapper.writeValueAsString(0);
             HttpEntity<String> requestEntity = new HttpEntity<>(payload, headers);
 
-            String rpiServerUrl = "http://192.168.100.137:5000/receive-program-stop";
+            String rpiServerUrl = "http://192.168.100.137:5000/" + raspberryId + "/receive-program-stop";
             ResponseEntity<String> rpiResponse = restTemplate.postForEntity(rpiServerUrl, requestEntity, String.class);
             System.out.println("Response from RPi5: " + rpiResponse.getBody());
         } catch (Exception e) {

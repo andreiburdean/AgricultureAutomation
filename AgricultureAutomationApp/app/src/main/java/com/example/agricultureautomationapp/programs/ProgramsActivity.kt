@@ -3,6 +3,7 @@ package com.example.agricultureautomationapp.programs
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -16,12 +17,22 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agricultureautomationapp.R
+import com.example.agricultureautomationapp.apiservices.EnvironmentApiService
 import com.example.agricultureautomationapp.customviews.SlidingToggleButton
+import com.example.agricultureautomationapp.models.ControlStatus
 import com.example.agricultureautomationapp.models.ProgramItem
 import com.example.agricultureautomationapp.monitor.MonitorActivity
 import com.example.agricultureautomationapp.sharedpreferences.SharedPreferences
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class ProgramsActivity : AppCompatActivity() {
+
+//    private val BASE_URL = "http://10.0.2.2:8080"
+    private val BASE_URL = "http://192.168.100.63:8080";
 
     private lateinit var addForm: View
     private lateinit var closeButton: ImageButton
@@ -57,9 +68,27 @@ class ProgramsActivity : AppCompatActivity() {
     private lateinit var fan: View
     private lateinit var led: View
 
+    private var controlValue: Int = 0
+    private var fanValue:     Int = 0
+    private var pumpValue:    Int = 0
+    private var ledValue:     Int = 0
+
+    private var environmentId: Int = 0
+
+    private fun postCurrentControlStatus() {
+        val status = ControlStatus(
+            switchControl = controlValue,
+            fan           = fanValue,
+            pump          = pumpValue,
+            led           = ledValue
+        )
+        programsManager.controlEnvironment(environmentId, status)
+    }
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         var programTypeId = 0
+        environmentId = SharedPreferences.getEnvironmentId(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.programs_activity)
@@ -106,34 +135,39 @@ class ProgramsActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         val slidingToggleControl = findViewById<SlidingToggleButton>(R.id.sliding_toggle_control)
+        val slidingTogglePump = findViewById<SlidingToggleButton>(R.id.sliding_toggle_pump)
+        val slidingToggleFan = findViewById<SlidingToggleButton>(R.id.sliding_toggle_fan)
+        val slidingToggleLed = findViewById<SlidingToggleButton>(R.id.sliding_toggle_led)
+
         slidingToggleControl.onToggleChangedListener = { isOn ->
+            controlValue = if (isOn) 1 else 0
+
             if (isOn) {
                 pump.visibility = View.VISIBLE
-                fan.visibility = View.VISIBLE
-                led.visibility = View.VISIBLE
+                fan.visibility  = View.VISIBLE
+                led.visibility  = View.VISIBLE
             } else {
                 pump.visibility = View.GONE
-                fan.visibility = View.GONE
-                led.visibility = View.GONE
+                fan.visibility  = View.GONE
+                led.visibility  = View.GONE
             }
+
+            postCurrentControlStatus()
         }
 
-        val slidingTogglePump = findViewById<SlidingToggleButton>(R.id.sliding_toggle_pump)
-        slidingTogglePump.onToggleChangedListener = { isOn ->
-            Toast.makeText(this, "Toggle is now ${if (isOn) "ON" else "OFF"}", Toast.LENGTH_SHORT)
-                .show()
-        }
-
-        val slidingToggleFan = findViewById<SlidingToggleButton>(R.id.sliding_toggle_fan)
         slidingToggleFan.onToggleChangedListener = { isOn ->
-            Toast.makeText(this, "Toggle is now ${if (isOn) "ON" else "OFF"}", Toast.LENGTH_SHORT)
-                .show()
+            fanValue = if (isOn) 1 else 0
+            postCurrentControlStatus()
         }
 
-        val slidingToggleLed = findViewById<SlidingToggleButton>(R.id.sliding_toggle_led)
+        slidingTogglePump.onToggleChangedListener = { isOn ->
+            pumpValue = if (isOn) 1 else 0
+            postCurrentControlStatus()
+        }
+
         slidingToggleLed.onToggleChangedListener = { isOn ->
-            Toast.makeText(this, "Toggle is now ${if (isOn) "ON" else "OFF"}", Toast.LENGTH_SHORT)
-                .show()
+            ledValue = if (isOn) 1 else 0
+            postCurrentControlStatus()
         }
 
         upperBarDropDownButton.setOnClickListener {
@@ -159,6 +193,67 @@ class ProgramsActivity : AppCompatActivity() {
             if(environmentOptionsLayout.visibility == View.VISIBLE){
                 environmentOptionsLayout.visibility = View.GONE
                 controlForm.visibility = View.VISIBLE
+
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+
+                val getControlStatusApi = retrofit.create(EnvironmentApiService::class.java)
+                val call = getControlStatusApi.getControlStatus(environmentId)
+
+                call.enqueue(object : Callback<ControlStatus> {
+                    override fun onResponse(
+                        call: Call<ControlStatus>,
+                        response: Response<ControlStatus>
+                    ) {
+                        if (response.isSuccessful) {
+                            response.body()?.let {
+                                if(response.body()!!.switchControl == 0){
+                                    slidingToggleControl.setToggleState(false)
+                                    slidingToggleFan.setToggleState(false)
+                                    slidingTogglePump.setToggleState(false)
+                                    slidingToggleLed.setToggleState(false)
+
+                                    fan.visibility = View.GONE
+                                    pump.visibility = View.GONE
+                                    led.visibility = View.GONE
+                                }
+                                else{
+                                    slidingToggleControl.setToggleState(true)
+
+                                    fan.visibility = View.VISIBLE
+                                    pump.visibility = View.VISIBLE
+                                    led.visibility = View.VISIBLE
+
+                                    if(response.body()!!.fan == 0){
+                                        slidingToggleFan.setToggleState(false)
+                                    }else{
+                                        slidingToggleFan.setToggleState(true)
+                                    }
+
+                                    if(response.body()!!.pump == 0){
+                                        slidingTogglePump.setToggleState(false)
+                                    }else{
+                                        slidingTogglePump.setToggleState(true)
+                                    }
+
+                                    if(response.body()!!.led == 0){
+                                        slidingToggleLed.setToggleState(false)
+                                    }else{
+                                        slidingToggleLed.setToggleState(true)
+                                    }
+                                }
+                            }
+                        } else {
+                            Log.d("ProgramsManager", "Error: ${response.code()}")
+                        }
+                    }
+
+                    override fun onFailure(call: Call<ControlStatus>, t: Throwable) {
+                        Log.d("ProgramsManager", "API call failed: ${t.message}")
+                    }
+                })
             }
         }
 

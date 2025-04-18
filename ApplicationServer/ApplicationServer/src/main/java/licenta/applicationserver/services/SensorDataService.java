@@ -1,8 +1,5 @@
 package licenta.applicationserver.services;
 
-import licenta.applicationserver.dtos.ProgramDTO;
-import licenta.applicationserver.entities.CustomEnvironmentCondition;
-import licenta.applicationserver.entities.Program;
 import licenta.applicationserver.entities.SensorData;
 import licenta.applicationserver.repositories.SensorDataRepository;
 import org.springframework.stereotype.Service;

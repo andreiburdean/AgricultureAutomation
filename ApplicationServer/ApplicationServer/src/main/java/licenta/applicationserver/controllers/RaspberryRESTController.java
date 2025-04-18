@@ -89,8 +89,8 @@ public class RaspberryRESTController {
         return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @PostMapping("/on-startup")
-    public ResponseEntity<Object> provideStartupData(@RequestBody Integer raspberryId){
+    @PostMapping("/{raspberryId}/on-startup")
+    public ResponseEntity<Object> provideStartupData(@PathVariable Integer raspberryId){
         System.out.println("apel");
         Optional<Environment> environment = rpiService.getEnvironmentByRaspberryId(raspberryId);
 

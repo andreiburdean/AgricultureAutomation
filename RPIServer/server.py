@@ -6,7 +6,7 @@ import asyncio
 from data_maps import *
 
 async def on_startup(raspberry_id):
-    await get_startup_info_from_server(raspberry_id)
+    await get_startup_info_from_server(raspberry_id) #de la rpi catre server
 
 async def actuator_controller():
     while True:
@@ -15,11 +15,11 @@ async def actuator_controller():
 
 async def server():
     app = web.Application()
-    app.router.add_post('/receive-sensor-data', handle_sensor_data_receive)
-    app.router.add_post('/{raspberry_id}/receive-control-command', handle_control_command)
-    app.router.add_post('/receive-custom-program', handle_modify_custom_program)
-    app.router.add_post('/receive-program-stop', handle_program_stop)
-    app.router.add_post('/receive-program-start', handle_program_start)
+    app.router.add_post('/receive-sensor-data', handle_sensor_data_receive) #de la esp, respectiv de la rpi catre server
+    app.router.add_post('/{raspberry_id}/receive-control-command', handle_control_command) #de la server
+    app.router.add_post('/{raspberry_id}/receive-custom-program', handle_modify_custom_program) #de la server
+    app.router.add_post('/{raspberry_id}/receive-program-stop', handle_program_stop) #de la server
+    app.router.add_post('/{raspberry_id}/receive-program-start', handle_program_start) #de la server
     
     print(sensor_control_map)
 
