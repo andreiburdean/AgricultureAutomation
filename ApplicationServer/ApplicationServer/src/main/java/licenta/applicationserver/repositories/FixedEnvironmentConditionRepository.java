@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FixedEnvironmentConditionRepository extends JpaRepository<FixedEnvironmentCondition, Integer>  {
+    //repository for methods related to fixed environment conditions operations on the database
+
     @Query("SELECT fe FROM FixedEnvironmentCondition fe WHERE fe.programType.programTypeId = :programTypeId")
     FixedEnvironmentCondition getFixedEnvironmentConditionByProgramTypeId(@Param("programTypeId") Integer programTypeId);
 }

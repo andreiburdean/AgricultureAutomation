@@ -60,6 +60,7 @@ public class ProgramController {
             program.setProgramType(programType);
 
             Program newProgram = programService.addProgram(program);
+            System.out.println("New program added for the environment with id: " + environmentId);
             return new ResponseEntity<>(newProgram, HttpStatus.CREATED);
         }else{
             Program program = new Program();
@@ -77,6 +78,7 @@ public class ProgramController {
             customCondition.setLuminosity(programDTO.getLuminosity());
 
             customConditionService.addCustomCondition(customCondition);
+            System.out.println("New program added for the environment with id: " + environmentId);
             return new ResponseEntity<>(newProgram, HttpStatus.CREATED);
         }
     }
@@ -102,7 +104,7 @@ public class ProgramController {
 
                 if(program.isPresent()){
                     Integer raspberryId = program.get().getEnvironment().getRaspberryId();
-                    String rpiServerUrl = "http://192.168.100.137:5000/"+ raspberryId + "/receive-custom-program";
+                    String rpiServerUrl = "http://192.168.108.171:5000/"+ raspberryId + "/receive-custom-program";
                     ResponseEntity<String> rpiResponse = restTemplate.postForEntity(rpiServerUrl, requestEntity, String.class);
                     System.out.println("Response from RPi5: " + rpiResponse.getBody());
                 }
@@ -123,6 +125,7 @@ public class ProgramController {
             }
             rpiService.sendStopPostToRPi5(program.getEnvironment().getRaspberryId());
             programService.deleteProgram(programId);
+            System.out.println("User deleted the program with id: " + programId);
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();

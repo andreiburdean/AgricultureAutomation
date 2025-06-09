@@ -13,6 +13,8 @@ import java.util.List;
 
 @Repository
 public interface CustomEnvironmentConditionRepository extends JpaRepository<CustomEnvironmentCondition, Integer> {
+    //repository for methods related to custom environment conditions operations on the database
+
     @Modifying
     @Transactional
     @Query("DELETE FROM CustomEnvironmentCondition c WHERE c.program.programId = :programId")

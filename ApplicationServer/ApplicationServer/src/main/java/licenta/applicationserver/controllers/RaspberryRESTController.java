@@ -91,7 +91,6 @@ public class RaspberryRESTController {
 
     @PostMapping("/{raspberryId}/on-startup")
     public ResponseEntity<Object> provideStartupData(@PathVariable Integer raspberryId){
-        System.out.println("apel");
         Optional<Environment> environment = rpiService.getEnvironmentByRaspberryId(raspberryId);
 
         if(environment.isPresent()){

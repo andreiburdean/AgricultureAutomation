@@ -1,10 +1,14 @@
 package com.example.agricultureautomationapp.environments
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.Intent
 import com.example.agricultureautomationapp.models.EnvironmentItem
 
 import android.util.Log
+import android.widget.Toast
 import com.example.agricultureautomationapp.apiservices.EnvironmentApiService
+import com.example.agricultureautomationapp.login.LoginActivity
 import com.example.agricultureautomationapp.sharedpreferences.SharedPreferences
 import retrofit2.Call
 import retrofit2.Callback
@@ -15,8 +19,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class EnvironmentsManager(private val context: Context) {
     private val environmentsList = mutableListOf<EnvironmentItem>()
 
-//    private val BASE_URL = "http://10.0.2.2:8080";
-    private val BASE_URL = "http://192.168.100.63:8080";
+    private val BASE_URL = "http://10.0.2.2:8080";
+//    private val BASE_URL = "http://192.168.40.113:8080";
 
     private fun getApiService(): EnvironmentApiService {
         val retrofit = Retrofit.Builder()
@@ -60,15 +64,20 @@ class EnvironmentsManager(private val context: Context) {
         val userId = SharedPreferences.getUserId(context)
 
         apiService.addEnvironment(userId, environment).enqueue(object : Callback<EnvironmentItem> {
-            override fun onResponse(call: Call<EnvironmentItem>, response: Response<EnvironmentItem>
-            ) {
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        environmentsList.add(it)
+            override fun onResponse(call: Call<EnvironmentItem>, response: Response<EnvironmentItem>) {
+                when (response.code()) {
+                    201 -> {
+                        response.body()?.let {
+                            environmentsList.add(it)
+                        }
+                        onResult(environmentsList)
                     }
-                    onResult(environmentsList)
-                } else {
-                    Log.e("EnvironmentManager", "Failed to add environment: ${response.code()}")
+                    400 -> {
+                        Log.d(TAG, "User creation failure: " + response.code())
+                    }
+                    409 -> {
+                        Toast.makeText(context, "Raspberry id already used by another environment", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 

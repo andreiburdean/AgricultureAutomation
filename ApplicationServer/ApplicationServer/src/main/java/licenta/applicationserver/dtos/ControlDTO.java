@@ -6,6 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ControlDTO {
+    //describes the object used by the control request
+
     private Integer switchControl;
     private Integer fan;
     private Integer pump;

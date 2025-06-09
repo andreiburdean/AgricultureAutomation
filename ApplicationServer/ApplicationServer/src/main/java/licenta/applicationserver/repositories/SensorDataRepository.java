@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface SensorDataRepository extends JpaRepository<SensorData, Integer> {
+    //repository for methods related to sensor data operations on the database
 
     @Modifying
     @Transactional
@@ -31,4 +32,9 @@ public interface SensorDataRepository extends JpaRepository<SensorData, Integer>
 
     @Query("SELECT s FROM SensorData s WHERE s.environment.environmentId = :environmentId")
     Optional<SensorData> findSensorDataByEnvironmentId(@Param("environmentId") Integer environmentId);
+
+    @Modifying
+    @org.springframework.transaction.annotation.Transactional
+    @Query("DELETE FROM SensorData s WHERE s.environment.environmentId = :environmentId")
+    void deleteByEnvironmentId(@Param("environmentId") Integer environmentId);
 }

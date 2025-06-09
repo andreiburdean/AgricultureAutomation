@@ -40,6 +40,9 @@ public class SensorDataService {
         return sensorDataRepository.save(sensorData);
     }
 
+    public void deleteSensorDataByEnvironmentId(Integer environmentId) {
+        sensorDataRepository.deleteByEnvironmentId(environmentId);
+    }
     public Optional<SensorData> getSensorDataByEnvironmentId(Integer environmentId){
        return sensorDataRepository.findSensorDataByEnvironmentId(environmentId);
     }

@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface ControlStatusRepository extends JpaRepository<ControlStatus, Integer> {
+    //repository for methods related to control status operations on the database
 
     @Modifying
     @Transactional
@@ -30,4 +31,9 @@ public interface ControlStatusRepository extends JpaRepository<ControlStatus, In
 
     @Query("SELECT c FROM ControlStatus c WHERE c.environment.environmentId = :environmentId")
     Optional<ControlStatus> findControlStatusByEnvironmentId(@Param("environmentId") Integer environmentId);
+
+    @Modifying
+    @org.springframework.transaction.annotation.Transactional
+    @Query("DELETE FROM ControlStatus c WHERE c.environment.environmentId = :environmentId")
+    void deleteByEnvironmentId(@Param("environmentId") Integer environmentId);
 }

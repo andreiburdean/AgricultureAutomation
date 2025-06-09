@@ -9,6 +9,9 @@ import lombok.Setter;
 @Entity
 @Table(name = "sensor_data")
 public class SensorData {
+    //describes the entity that represents the sensor data
+
+    //Primary Key
     @Id
     private Integer environmentId;
 

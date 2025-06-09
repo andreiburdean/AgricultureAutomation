@@ -9,6 +9,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "environments", uniqueConstraints = @UniqueConstraint(columnNames = "raspberry_id"))
 public class Environment {
+    //describes the environment/the automation itself
 
     //Primary Key
     @Id

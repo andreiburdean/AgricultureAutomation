@@ -34,6 +34,10 @@ public class ProgramService {
         return programRepository.findByProgramId(programId);
     }
 
+    public Optional<List<Program>> findProgramsByEnvironmentIdForDelete(Integer environmentId){
+        return programRepository.findProgramsByEnvironmentId(environmentId);
+    }
+
     public ResponseEntity<List<ProgramDTO>> findProgramsByEnvironmentId(Integer environmentId){
 
         Optional<List<Program>> programs = programRepository.findProgramsByEnvironmentId(environmentId);
@@ -81,6 +85,10 @@ public class ProgramService {
 
     public void deleteProgram(Integer programId) {
         programRepository.deleteById(programId);
+    }
+
+    public void deleteProgramsByEnvironmentId(Integer environmentId) {
+        programRepository.deleteByEnvironmentId(environmentId);
     }
 
     public Integer stopPrograms(Integer environmentId){

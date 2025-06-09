@@ -9,6 +9,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "programs")
 public class Program {
+    //describes the entity that hold the parameters as a "program" that runs on the RPi5
 
     //Primary Key
     @Id

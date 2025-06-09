@@ -14,6 +14,8 @@ import java.util.Optional;
 
 @Repository
 public interface ProgramRepository extends JpaRepository<Program, Integer> {
+    //repository for methods related to program operations on the database
+
     Optional<Program> findByProgramId(Integer programId);
 
     @Query("SELECT p FROM Program p WHERE p.environment.environmentId = :environmentId")
@@ -21,6 +23,11 @@ public interface ProgramRepository extends JpaRepository<Program, Integer> {
 
     @Query("SELECT p FROM Program p WHERE p.environment.environmentId = :environmentId AND p.status = 1")
     Optional<Program> findActiveProgramByEnvironmentId(@Param("environmentId") Integer environmentId);
+
+    @Modifying
+    @org.springframework.transaction.annotation.Transactional
+    @Query("DELETE FROM Program p WHERE p.environment.environmentId = :environmentId")
+    void deleteByEnvironmentId(@Param("environmentId") Integer environmentId);
 
     @Modifying
     @Transactional

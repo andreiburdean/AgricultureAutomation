@@ -41,6 +41,10 @@ public class ControlStatusService {
         return controlStatusRepository.save(controlStatus);
     }
 
+    public void deleteControlStatusByEnvironmentId(Integer environmentId) {
+        controlStatusRepository.deleteByEnvironmentId(environmentId);
+    }
+
     public Optional<ControlStatus> getControlStatusByEnvironmentId(Integer environmentId){
         return controlStatusRepository.findControlStatusByEnvironmentId(environmentId);
     }

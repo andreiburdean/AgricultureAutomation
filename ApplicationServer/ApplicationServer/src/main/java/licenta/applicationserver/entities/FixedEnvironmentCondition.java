@@ -9,7 +9,9 @@ import lombok.Setter;
 @Entity
 @Table(name = "fixed_environment_conditions")
 public class FixedEnvironmentCondition {
+    //describes the fixed/builtin parameters that a program can use
 
+    //Primary Key
     @Id
     private Integer programTypeId;
 

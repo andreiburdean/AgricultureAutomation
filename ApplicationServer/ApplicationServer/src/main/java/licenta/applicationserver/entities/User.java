@@ -9,6 +9,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "users")
 public class User {
+    //describes the user entity
 
     //Primary Key
     @Id

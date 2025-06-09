@@ -1,9 +1,7 @@
 package licenta.applicationserver.services;
 
-import licenta.applicationserver.dtos.ConditionsDTO;
 import licenta.applicationserver.dtos.ControlDTO;
-import licenta.applicationserver.entities.User;
-import licenta.applicationserver.security.PasswordHasher;
+import licenta.applicationserver.entities.Program;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
@@ -20,10 +18,18 @@ import java.util.Optional;
 public class EnvironmentService {
 
     private final EnvironmentRepository environmentRepository;
+    private final ControlStatusService controlStatusService;
+    private final ProgramService programService;
+    private final CustomEnvironmentConditionService customEnvironmentConditionService;
+    private final SensorDataService sensorDataService;
 
     @Autowired
-    public EnvironmentService(EnvironmentRepository environmentRepository) {
+    public EnvironmentService(EnvironmentRepository environmentRepository, ControlStatusService controlStatusService, ProgramService programService, CustomEnvironmentConditionService customEnvironmentConditionService, SensorDataService sensorDataService) {
         this.environmentRepository = environmentRepository;
+        this.controlStatusService = controlStatusService;
+        this.programService = programService;
+        this.customEnvironmentConditionService = customEnvironmentConditionService;
+        this.sensorDataService = sensorDataService;
     }
 
     public Environment addEnvironment(Environment environment) {
@@ -51,6 +57,18 @@ public class EnvironmentService {
     }
 
     public void deleteEnvironment(Integer environmentId) {
+        Optional<List<Program>> tempList =  programService.findProgramsByEnvironmentIdForDelete(environmentId);
+        List<Program> programList;
+        if(tempList.isPresent()){
+            programList = tempList.get();
+            for (Program program : programList){
+                customEnvironmentConditionService.deleteCustomConditionByProgramId(program.getProgramId());
+            }
+        }
+
+        programService.deleteProgramsByEnvironmentId(environmentId);
+        sensorDataService.deleteSensorDataByEnvironmentId(environmentId);
+        controlStatusService.deleteControlStatusByEnvironmentId(environmentId);
         environmentRepository.deleteById(environmentId);
     }
 
@@ -62,7 +80,7 @@ public class EnvironmentService {
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             HttpEntity<ControlDTO> requestEntity = new HttpEntity<>(controlDTO, headers);
-            String rpiServerUrl = "http://192.168.100.137:5000/" + raspberryId + "/receive-control-command";
+            String rpiServerUrl = "http://192.168.108.171:5000/" + raspberryId + "/receive-control-command";
 
             ResponseEntity<String> rpiResponse = restTemplate.postForEntity(rpiServerUrl, requestEntity, String.class);
             System.out.println("Response from RPi5: " + rpiResponse.getBody());

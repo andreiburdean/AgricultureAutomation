@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -31,8 +32,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class ProgramsActivity : AppCompatActivity() {
 
-//    private val BASE_URL = "http://10.0.2.2:8080"
-    private val BASE_URL = "http://192.168.100.63:8080";
+    private val BASE_URL = "http://10.0.2.2:8080"
+//    private val BASE_URL = "http://192.168.40.113:8080";
 
     private lateinit var addForm: View
     private lateinit var closeButton: ImageButton
@@ -391,29 +392,55 @@ class ProgramsActivity : AppCompatActivity() {
                         }
                     }
                     else{
-                        val temperature = (temperatureField.text.toString().trim()).toDouble()
-                        val humidity = (humidityField.text.toString().trim()).toDouble()
-                        val luminosity = (luminosityField.text.toString().trim()).toDouble()
-                        val newProgram = ProgramItem(programTypeId, programName, temperature, humidity, luminosity)
-                        programsManager.addProgram(newProgram) { updatedList ->
-                            adapter.updateList(updatedList)
-                            Toast.makeText(this, "Program added!", Toast.LENGTH_SHORT).show()
-                            addForm.visibility = View.GONE
-                            selectProgram.setText("Select Program")
-                            programNameField.setText("")
 
-                            temperatureText.visibility = View.INVISIBLE
-                            temperatureField.visibility = View.INVISIBLE
-                            humidityText.visibility = View.INVISIBLE
-                            humidityField.visibility = View.INVISIBLE
-                            luminosityText.visibility = View.INVISIBLE
-                            luminosityField.visibility = View.INVISIBLE
+                        if(temperatureField.text.isEmpty() || humidityField.text.isEmpty() || luminosityField.text.isEmpty()) {
+                            Toast.makeText(this@ProgramsActivity, "Please fill all the fields", Toast.LENGTH_SHORT).show()
+                        }
+                        else{
+                            val temperature = (temperatureField.text.toString().trim()).toDouble()
+                            val humidity = (humidityField.text.toString().trim()).toDouble()
+                            val luminosity = (luminosityField.text.toString().trim()).toDouble()
 
-                            temperatureField.setText("")
-                            humidityField.setText("")
-                            luminosityField.setText("")
+                            if((temperature > -50 && temperature < 50) && (humidity > 0 && humidity < 100) && (luminosity > 0 && luminosity < 5)){
+                                val newProgram = ProgramItem(programTypeId, programName, temperature, humidity, luminosity)
+                                programsManager.addProgram(newProgram) { updatedList ->
+                                    adapter.updateList(updatedList)
+                                    Toast.makeText(this, "Program added!", Toast.LENGTH_SHORT).show()
+                                    addForm.visibility = View.GONE
+                                    selectProgram.setText("Select Program")
+                                    programNameField.setText("")
+
+                                    temperatureText.visibility = View.INVISIBLE
+                                    temperatureField.visibility = View.INVISIBLE
+                                    humidityText.visibility = View.INVISIBLE
+                                    humidityField.visibility = View.INVISIBLE
+                                    luminosityText.visibility = View.INVISIBLE
+                                    luminosityField.visibility = View.INVISIBLE
+
+                                    temperatureField.setText("")
+                                    humidityField.setText("")
+                                    luminosityField.setText("")
+
+                                    recreate()
+                                }
+                            }
+                            else{
+                                if(temperature < -50 || temperature > 50){
+                                    Toast.makeText(this@ProgramsActivity, "Temperature must be between -50° and 50° Celsius", Toast.LENGTH_SHORT).show()
+                                }
+
+                                if(humidity < 0 || humidity > 100){
+                                    Toast.makeText(this@ProgramsActivity, "Humidity must be between 0% and 100%", Toast.LENGTH_SHORT).show()
+                                }
+
+                                if(luminosity < 0 || luminosity > 5){
+                                    Toast.makeText(this@ProgramsActivity, "Luminosity must be between 0 and 5", Toast.LENGTH_SHORT).show()
+                                }
+                            }
                         }
                     }
+
+                    hideKeyboard()
                 }
                 else{
                     Toast.makeText(this, "Please choose a program!", Toast.LENGTH_SHORT).show()
@@ -425,6 +452,14 @@ class ProgramsActivity : AppCompatActivity() {
 
         programsManager.fetchPrograms { programs ->
             adapter.updateList(programs)
+        }
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val view = currentFocus
+        if (view != null) {
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 }

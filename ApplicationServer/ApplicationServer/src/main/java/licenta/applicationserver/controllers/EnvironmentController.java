@@ -16,6 +16,7 @@ import licenta.applicationserver.entities.Environment;
 import licenta.applicationserver.services.EnvironmentService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Controller
@@ -36,12 +37,22 @@ public class EnvironmentController {
 
     @PostMapping("{userId}/add-environment")
     public ResponseEntity<EnvironmentDTO> addEnvironment(@PathVariable Integer userId, @RequestBody EnvironmentDTO environmentDTO) {
-
         User user = userService.findUserById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
+        Environment env = environmentService.findEnvironmentByRaspberryId(environmentDTO.getRaspberryId());
+        Integer raspberryId;
+
+        if (env != null) {
+            raspberryId = env.getRaspberryId();
+            if (Objects.equals(raspberryId, environmentDTO.getRaspberryId())) {
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            }
+        }
+
+        // If env is null or raspberryId does not match, create a new environment
         Environment environment = new Environment();
         environment.setRaspberryId(environmentDTO.getRaspberryId());
         environment.setRaspberryIP(environmentDTO.getRaspberryIp());
@@ -50,9 +61,10 @@ public class EnvironmentController {
 
         Environment newEnvironment = environmentService.addEnvironment(environment);
         EnvironmentDTO newEnvironmentDTO = new EnvironmentDTO(newEnvironment.getEnvironmentId(), newEnvironment.getRaspberryId(), newEnvironment.getRaspberryIP(), newEnvironment.getEnvironmentName());
-        System.out.println("ceva");
+        System.out.println("New environment added by user: " + user.getEmail());
         return new ResponseEntity<>(newEnvironmentDTO, HttpStatus.CREATED);
     }
+
 
     @GetMapping("{userId}/get-environments")
     public ResponseEntity<List<Environment>> getEnvironmentsByUserId(@PathVariable Integer userId) {
@@ -63,6 +75,7 @@ public class EnvironmentController {
     public ResponseEntity<Void> deleteEnvironment(@PathVariable Integer environmentId) {
         if (environmentService.findEnvironmentById(environmentId) != null) {
             environmentService.deleteEnvironment(environmentId);
+            System.out.println("User deleted the environment with id: " + environmentId);
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();

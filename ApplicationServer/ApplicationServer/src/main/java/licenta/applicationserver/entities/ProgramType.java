@@ -9,6 +9,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "program_types")
 public class ProgramType {
+    //describes the entity that classifies a program based on a certain type
 
     //Primary Key
     @Id

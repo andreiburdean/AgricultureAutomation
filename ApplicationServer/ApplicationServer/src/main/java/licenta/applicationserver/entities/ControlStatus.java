@@ -9,6 +9,9 @@ import lombok.Setter;
 @Entity
 @Table(name = "control_status")
 public class ControlStatus {
+    //describes the structure of the control request
+
+    //Primary Key
     @Id
     private Integer environmentId;
 

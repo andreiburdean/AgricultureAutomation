@@ -1,7 +1,7 @@
 package licenta.applicationserver.services;
 
-import licenta.applicationserver.dtos.LoginRequest;
-import licenta.applicationserver.dtos.LoginResponse;
+import licenta.applicationserver.dtos.LoginRequestDTO;
+import licenta.applicationserver.dtos.LoginResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +22,10 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUserAccount(User user) {
+    public void createUserAccount(User user) {
         String hashedPassword = PasswordHasher.hashPassword(user.getPassword());
         user.setPassword(hashedPassword);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     public User findUserById(Integer userId) {
@@ -38,19 +38,22 @@ public class UserService {
         return optionalUser.orElse(null);
     }
 
-    public ResponseEntity<LoginResponse> loginUser(LoginRequest loginRequest) {
-        Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
+    public ResponseEntity<LoginResponseDTO> loginUser(LoginRequestDTO loginRequestDTO) {
+        Optional<User> optionalUser = userRepository.findByEmail(loginRequestDTO.getEmail());
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            String hashedPassword = PasswordHasher.hashPassword(loginRequest.getPassword());
+            String hashedPassword = PasswordHasher.hashPassword(loginRequestDTO.getPassword());
             if (user.getPassword().equals(hashedPassword)) {
-                return ResponseEntity.ok(new LoginResponse(user.getUserId(), null));
+                System.out.println("User logged in: " + loginRequestDTO.getEmail() + " " + loginRequestDTO.getPassword());
+                return ResponseEntity.ok(new LoginResponseDTO(user.getUserId(), null));
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(null, "Incorrect password"));
+                System.out.println("Failed login. Reason: wrong password for user: " + user.getEmail());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponseDTO(null, "Incorrect password"));
             }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LoginResponse(null, "User not found"));
+            System.out.println("Failed login. Reason: user " + loginRequestDTO.getEmail() + " doesn't exist.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LoginResponseDTO(null, "User not found"));
         }
     }
 }

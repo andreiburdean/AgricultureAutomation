@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -66,10 +67,14 @@ class EnvironmentsActivity : AppCompatActivity() {
         }
 
         addEnvironmentButton.setOnClickListener {
-            val raspberryId = raspberryIdInput.text.toString().toInt()
-            val raspberryIp = raspberryIpInput.text.toString().trim()
-            val envName = environmentNameInput.text.toString().trim()
-            if (envName.isNotEmpty()) {
+            if(raspberryIdInput.text.isEmpty() || raspberryIpInput.text.isEmpty() || environmentNameInput.text.isEmpty()) {
+                Toast.makeText(this@EnvironmentsActivity, "Please fill all the fields", Toast.LENGTH_SHORT).show()
+            }
+            else{
+                val raspberryId = raspberryIdInput.text.toString().toInt()
+                val raspberryIp = raspberryIpInput.text.toString().trim()
+                val envName = environmentNameInput.text.toString().trim()
+
                 val newEnvironment = EnvironmentItem(raspberryId = raspberryId, raspberryIp =  raspberryIp, environmentName = envName)
                 environmentsManager.addEnvironment(newEnvironment) { updatedList ->
                     adapter.updateList(updatedList)
@@ -79,13 +84,21 @@ class EnvironmentsActivity : AppCompatActivity() {
                     environmentNameInput.setText("")
                     addForm.visibility = View.GONE
                 }
-            } else {
-                Toast.makeText(this, "Please fill out the fields!", Toast.LENGTH_SHORT).show()
             }
+
+            hideKeyboard()
         }
 
         environmentsManager.fetchEnvironments { environments ->
             adapter.updateList(environments)
+        }
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val view = currentFocus
+        if (view != null) {
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 }

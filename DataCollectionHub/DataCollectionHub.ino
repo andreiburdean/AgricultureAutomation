@@ -17,24 +17,18 @@
 DHT dht(DHT_PIN, DHT_TYPE);
 Adafruit_MPL3115A2 baro;
 
-//websocket client
-// using namespace websockets;
-// WebsocketsClient client;
-
 //WIFI setup
-const String ssid     = "DIGI-22tb";
-const String password = "qGj6e94d";
+// const String ssid     = "DIGI-22tb";
+// const String password = "qGj6e94d";
+const String ssid     = "FC Petrolul Potcoava";
+const String password = "whatever";
 // const String ssid     = "DIGI-hdP9";
 // const String password = "xaM3ApJwYu";
 
 //endpoint setup
-const String serverHost = "192.168.100.137";
-// const String serverHost = "192.168.1.131";
+const String serverHost = "192.168.108.171";
 const int serverPort = 5000;
-// const String serverPathWS = "/ws";
-// const String serverURL = "http://" + serverHost + ":" + serverPort + "/receive-sensor-data";
 const String serverURL = "http://" + serverHost + ":" + serverPort + "/receive-sensor-data";
-
 
 void setup() {
   Serial.begin(9600);
@@ -43,30 +37,22 @@ void setup() {
   dht.begin();
 
   if (!baro.begin()) {
-    Serial.println("Could not find MPL3115A2 sensor. Check wiring.");
+    Serial.println("MPL3115A2 atmospheric pressure sensor is not properly connected. Check wiring.");
     while(1);
   }
+
   baro.setSeaPressure(1013.26);
-
   pinMode(HW080_PIN, INPUT);
-
   delay(2000);
 
   //WIFI setup
   WiFi.begin(ssid, password);
-  Serial.print("Connecting to WiFi");
+  Serial.print("Connecting to the specified WiFi network.");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-  Serial.println("\nWiFi connected");
-
-  //endpoint setup
-  // if (client.connect(serverHost, serverPort, serverPathWS)) {
-  //   Serial.println("Connected to WebSocket server");
-  // } else {
-  //   Serial.println("Failed to connect to WebSocket server");
-  // }
+  Serial.println("\nWiFi connected.");
 }
 
 void loop() {
@@ -79,17 +65,15 @@ void loop() {
     float temperature = dht.readTemperature();
   
     if (isnan(humidity) || isnan(temperature)) {
-      Serial.println("Failed to read from DHT sensor!");
+      Serial.println("Failed to read from thr DHT sensor.");
     }
 
     float pressure = baro.getPressure();
-
     int luminosityVoltageValue = analogRead(TEMP6000_PIN);
     float luminosity = luminosityVoltageValue * (5 / 1023.0);
-
     int soilMoisture = digitalRead(HW080_PIN);
 
-    // JSON data
+    //JSON data
     StaticJsonDocument<200> doc;
     doc["temperature"] = temperature;
     doc["humidity"] = humidity;
@@ -99,7 +83,6 @@ void loop() {
         
     String jsonData;
     serializeJson(doc, jsonData);
-
     Serial.println(jsonData);
 
     //POST request
@@ -108,17 +91,13 @@ void loop() {
     int httpResponseCode = http.POST(jsonData);
 
     if (httpResponseCode > 0) {
-        // Serial.print("Server Response: ");
-        // Serial.println(httpResponseCode);
-        // String response = http.getString();
-        // Serial.println(response);
     } else {
         Serial.print("Error sending request: ");
         Serial.println(httpResponseCode);
     }
     http.end();
   } else {
-    Serial.println("WiFi disconnected, cannot send data.");
+    Serial.println("WiFi has disconnected, cannot send sensor data.");
   }
 
   delay(100);  

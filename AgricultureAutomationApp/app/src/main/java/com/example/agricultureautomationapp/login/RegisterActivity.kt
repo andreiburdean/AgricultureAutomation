@@ -4,6 +4,7 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -20,8 +21,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class RegisterActivity : AppCompatActivity()  {
 
-//    private val BASE_URL = "http://10.0.2.2:8080"
-    private val BASE_URL = "http://192.168.100.63:8080"
+    private val BASE_URL = "http://10.0.2.2:8080"
+//    private val BASE_URL = "http://192.168.40.113:8080"
     private lateinit var emailInput: EditText
     private lateinit var passwordInput: EditText
     private lateinit var registerButton: Button
@@ -43,6 +44,8 @@ class RegisterActivity : AppCompatActivity()  {
     private fun setListeners() {
         registerButton.setOnClickListener {
             val validInputs = validateInputs()
+
+            hideKeyboard()
 
             if (validInputs) {
                 val enteredEmail = emailInput.text.toString()
@@ -90,16 +93,35 @@ class RegisterActivity : AppCompatActivity()  {
     private fun validateInputs(): Boolean {
         val email = emailInput.text.toString()
         val password = passwordInput.text.toString()
+        var someVariable = 0
 
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, getString(R.string.empty_login_fields), Toast.LENGTH_SHORT).show()
-            return false
+            someVariable = 1
+
+        }
+
+        if(password.length < 6){
+            Toast.makeText(this, "The password must be 6 characters or longer", Toast.LENGTH_SHORT).show()
+            someVariable = 1
         }
 
         if (!email.contains("@")) {
             Toast.makeText(this, getString(R.string.invalid_email_format), Toast.LENGTH_SHORT).show()
-            return false
+            someVariable = 1
         }
-        return true
+        return if(someVariable == 1){
+            false
+        }else{
+            true
+        }
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val view = currentFocus
+        if (view != null) {
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
     }
 }

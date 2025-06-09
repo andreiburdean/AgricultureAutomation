@@ -9,6 +9,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "custom_environment_conditions")
 public class CustomEnvironmentCondition {
+    //describes the custom parameters a user can input into a program
 
     //Primary Key
     @Id

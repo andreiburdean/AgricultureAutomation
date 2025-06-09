@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class PasswordHasher {
+    //password hasher used for storing passwords as hashes rather than plain text
 
     public static String hashPassword(String password) {
         try {
