@@ -2,13 +2,11 @@ package com.example.agricultureautomationapp.environments
 
 import android.content.ContentValues.TAG
 import android.content.Context
-import android.content.Intent
 import com.example.agricultureautomationapp.models.EnvironmentItem
 
 import android.util.Log
 import android.widget.Toast
 import com.example.agricultureautomationapp.apiservices.EnvironmentApiService
-import com.example.agricultureautomationapp.login.LoginActivity
 import com.example.agricultureautomationapp.sharedpreferences.SharedPreferences
 import retrofit2.Call
 import retrofit2.Callback
@@ -76,11 +74,11 @@ class EnvironmentsManager(private val context: Context) {
                         Log.d(TAG, "User creation failure: " + response.code())
                     }
                     409 -> {
-                        Toast.makeText(context, "Raspberry id already used by another environment", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context,
+                            "Raspberry id already used by another environment", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
-
             override fun onFailure(call: Call<EnvironmentItem>, t: Throwable) {
                 Log.e("EnvironmentManager", "Failed to add environment: ${t.message}")
             }

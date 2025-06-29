@@ -25,7 +25,7 @@ public interface ProgramRepository extends JpaRepository<Program, Integer> {
     Optional<Program> findActiveProgramByEnvironmentId(@Param("environmentId") Integer environmentId);
 
     @Modifying
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     @Query("DELETE FROM Program p WHERE p.environment.environmentId = :environmentId")
     void deleteByEnvironmentId(@Param("environmentId") Integer environmentId);
 

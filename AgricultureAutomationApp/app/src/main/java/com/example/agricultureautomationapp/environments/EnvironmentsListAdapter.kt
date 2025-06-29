@@ -26,11 +26,9 @@ class EnvironmentsListAdapter(private var environments: MutableList<EnvironmentI
     override fun onBindViewHolder(holder: EnvironmentViewHolder, position: Int) {
         val environment = environments[position]
         holder.environmentName.text = environment.environmentName
-
         holder.itemView.setOnClickListener {
             onItemClick(environment)
         }
-
         holder.deleteButton.setOnClickListener {
             environmentsManager.deleteEnvironment(environment) { success ->
                 if (success) {

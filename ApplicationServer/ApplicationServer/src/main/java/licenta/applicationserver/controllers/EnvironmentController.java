@@ -65,7 +65,6 @@ public class EnvironmentController {
         return new ResponseEntity<>(newEnvironmentDTO, HttpStatus.CREATED);
     }
 
-
     @GetMapping("{userId}/get-environments")
     public ResponseEntity<List<Environment>> getEnvironmentsByUserId(@PathVariable Integer userId) {
         return environmentService.findEnvironmentsByUserId(userId);

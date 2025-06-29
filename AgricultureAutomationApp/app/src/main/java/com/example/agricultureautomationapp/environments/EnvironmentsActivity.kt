@@ -64,18 +64,32 @@ class EnvironmentsActivity : AppCompatActivity() {
 
         closeButton.setOnClickListener {
             addForm.visibility = View.GONE
+            raspberryIdInput.setText("")
+            raspberryIpInput.setText("")
+            environmentNameInput.setText("")
         }
 
         addEnvironmentButton.setOnClickListener {
-            if(raspberryIdInput.text.isEmpty() || raspberryIpInput.text.isEmpty() || environmentNameInput.text.isEmpty()) {
+            if(raspberryIdInput.text.isEmpty() || raspberryIpInput.text.isEmpty()
+                || environmentNameInput.text.isEmpty()) {
                 Toast.makeText(this@EnvironmentsActivity, "Please fill all the fields", Toast.LENGTH_SHORT).show()
+                hideKeyboard()
+            }
+            else if(raspberryIdInput.text.toString().trim().toIntOrNull() == null){
+                Toast.makeText(this@EnvironmentsActivity, "Wrong ID format", Toast.LENGTH_SHORT).show()
+                hideKeyboard()
+            }
+            else if(!ipv4Regex.matches(raspberryIpInput.text.toString().trim())){
+                Toast.makeText(this@EnvironmentsActivity, "Wrong IP format", Toast.LENGTH_SHORT).show()
+                hideKeyboard()
             }
             else{
                 val raspberryId = raspberryIdInput.text.toString().toInt()
                 val raspberryIp = raspberryIpInput.text.toString().trim()
                 val envName = environmentNameInput.text.toString().trim()
 
-                val newEnvironment = EnvironmentItem(raspberryId = raspberryId, raspberryIp =  raspberryIp, environmentName = envName)
+                val newEnvironment = EnvironmentItem(raspberryId = raspberryId,
+                    raspberryIp =  raspberryIp, environmentName = envName)
                 environmentsManager.addEnvironment(newEnvironment) { updatedList ->
                     adapter.updateList(updatedList)
                     Toast.makeText(this, "Environment added!", Toast.LENGTH_SHORT).show()
@@ -93,6 +107,11 @@ class EnvironmentsActivity : AppCompatActivity() {
             adapter.updateList(environments)
         }
     }
+
+    private val ipv4Regex = Regex(
+        "(25[0-5]|2[0-4]\\d|[1-9]?\\d)" +
+                "(\\.(25[0-5]|2[0-4]\\d|[1-9]?\\d)){3}"
+    )
 
     private fun hideKeyboard() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager

@@ -104,7 +104,8 @@ public class ProgramController {
 
                 if(program.isPresent()){
                     Integer raspberryId = program.get().getEnvironment().getRaspberryId();
-                    String rpiServerUrl = "http://192.168.108.171:5000/"+ raspberryId + "/receive-custom-program";
+                    String raspberryIpAddress = "http://192.168.108.171:5000/";
+                    String rpiServerUrl = raspberryIpAddress + raspberryId + "/receive-custom-program";
                     ResponseEntity<String> rpiResponse = restTemplate.postForEntity(rpiServerUrl, requestEntity, String.class);
                     System.out.println("Response from RPi5: " + rpiResponse.getBody());
                 }

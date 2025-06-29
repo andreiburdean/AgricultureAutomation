@@ -23,6 +23,7 @@ public class EnvironmentService {
     private final CustomEnvironmentConditionService customEnvironmentConditionService;
     private final SensorDataService sensorDataService;
 
+
     @Autowired
     public EnvironmentService(EnvironmentRepository environmentRepository, ControlStatusService controlStatusService, ProgramService programService, CustomEnvironmentConditionService customEnvironmentConditionService, SensorDataService sensorDataService) {
         this.environmentRepository = environmentRepository;
@@ -80,7 +81,8 @@ public class EnvironmentService {
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             HttpEntity<ControlDTO> requestEntity = new HttpEntity<>(controlDTO, headers);
-            String rpiServerUrl = "http://192.168.108.171:5000/" + raspberryId + "/receive-control-command";
+            String raspberryIpAddress = "http://192.168.108.171:5000/";
+            String rpiServerUrl = raspberryIpAddress + raspberryId + "/receive-control-command";
 
             ResponseEntity<String> rpiResponse = restTemplate.postForEntity(rpiServerUrl, requestEntity, String.class);
             System.out.println("Response from RPi5: " + rpiResponse.getBody());
