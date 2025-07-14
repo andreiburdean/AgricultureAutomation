@@ -32,8 +32,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class ProgramsActivity : AppCompatActivity() {
 
-    private val BASE_URL = "http://10.0.2.2:8080"
-//    private val BASE_URL = "http://192.168.40.113:8080";
+//    private val BASE_URL = "http://10.0.2.2:8080"
+    private val BASE_URL = "http://192.168.108.113:8080";
 
     private lateinit var addForm: View
     private lateinit var closeButton: ImageButton
@@ -181,6 +181,7 @@ class ProgramsActivity : AppCompatActivity() {
 
         mainLayout.setOnClickListener {
             environmentOptionsLayout.visibility = View.GONE
+            programsDropDown.visibility = View.GONE
         }
 
         addButton.setOnClickListener {
@@ -286,6 +287,11 @@ class ProgramsActivity : AppCompatActivity() {
         controlCloseButton.setOnClickListener{
             if(controlForm.visibility == View.VISIBLE){
                 controlForm.visibility = View.GONE
+                controlValue = 0
+                fanValue = 0
+                pumpValue = 0
+                ledValue = 0
+                postCurrentControlStatus()
             }
         }
 
@@ -456,10 +462,10 @@ class ProgramsActivity : AppCompatActivity() {
     }
 
     private fun hideKeyboard() {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         val view = currentFocus
         if (view != null) {
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
+            inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 }

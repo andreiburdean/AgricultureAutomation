@@ -17,8 +17,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class ProgramsManager(private val context: Context) {
     private val programsList = mutableListOf<ProgramItem>()
-    private val BASE_URL = "http://10.0.2.2:8080";
-//    private val BASE_URL = "http://192.168.40.113:8080";
+//    private val BASE_URL = "http://10.0.2.2:8080";
+    private val BASE_URL = "http://192.168.108.113:8080";
 
     private fun getApiService(): ProgramApiService {
         val retrofit = Retrofit.Builder()

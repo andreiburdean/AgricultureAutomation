@@ -21,8 +21,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class RegisterActivity : AppCompatActivity()  {
 
-    private val BASE_URL = "http://10.0.2.2:8080"
-//    private val BASE_URL = "http://192.168.40.113:8080"
+//    private val BASE_URL = "http://10.0.2.2:8080"
+    private val BASE_URL = "http://192.168.108.113:8080"
     private lateinit var emailInput: EditText
     private lateinit var passwordInput: EditText
     private lateinit var registerButton: Button
@@ -118,10 +118,10 @@ class RegisterActivity : AppCompatActivity()  {
     }
 
     private fun hideKeyboard() {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         val view = currentFocus
         if (view != null) {
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
+            inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 }

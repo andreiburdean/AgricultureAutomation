@@ -23,8 +23,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class MonitorActivity : AppCompatActivity() {
-    private val BASE_URL = "http://10.0.2.2:8080"
-//    private val BASE_URL = "http://192.168.40.113:8080"
+//    private val BASE_URL = "http://10.0.2.2:8080"
+    private val BASE_URL = "http://192.168.108.113:8080"
     private var pollingJob: Job? = null
 
     private lateinit var environmentName: TextView

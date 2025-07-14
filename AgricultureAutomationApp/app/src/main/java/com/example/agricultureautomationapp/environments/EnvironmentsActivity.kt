@@ -108,16 +108,14 @@ class EnvironmentsActivity : AppCompatActivity() {
         }
     }
 
-    private val ipv4Regex = Regex(
-        "(25[0-5]|2[0-4]\\d|[1-9]?\\d)" +
-                "(\\.(25[0-5]|2[0-4]\\d|[1-9]?\\d)){3}"
-    )
+    private val ipv4Regex = Regex("""^((25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(25[0-5]|2[0-4]\d|1?\d?\d)$""")
+
 
     private fun hideKeyboard() {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         val view = currentFocus
         if (view != null) {
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
+            inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 }

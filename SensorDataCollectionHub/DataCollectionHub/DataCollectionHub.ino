@@ -1,9 +1,9 @@
 #include <ESP8266WiFi.h>
-#include <ArduinoWebsockets.h>
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>
 #include <Adafruit_MPL3115A2.h>
 #include "DHT.h"
+#include <math.h>
 
 //pin setup
 #define DHT_PIN D7
@@ -18,12 +18,9 @@ DHT dht(DHT_PIN, DHT_TYPE);
 Adafruit_MPL3115A2 baro;
 
 //WIFI setup
-// const String ssid     = "DIGI-22tb";
-// const String password = "qGj6e94d";
+
 const String ssid     = "FC Petrolul Potcoava";
 const String password = "whatever";
-// const String ssid     = "DIGI-hdP9";
-// const String password = "xaM3ApJwYu";
 
 //endpoint setup
 const String serverHost = "192.168.108.171";
@@ -37,11 +34,11 @@ void setup() {
   dht.begin();
 
   if (!baro.begin()) {
-    Serial.println("MPL3115A2 atmospheric pressure sensor is not properly connected. Check wiring.");
+    Serial.println("The atmospheric pressure sensor is not properly connected. Check the wiring.");
     while(1);
   }
 
-  baro.setSeaPressure(1013.26);
+  baro.setSeaPressure(1000);
   pinMode(HW080_PIN, INPUT);
   delay(2000);
 
@@ -97,7 +94,7 @@ void loop() {
     }
     http.end();
   } else {
-    Serial.println("WiFi has disconnected, cannot send sensor data.");
+    Serial.println("The WiFi connection has disconnected, cannot send sensor data.");
   }
 
   delay(100);  
